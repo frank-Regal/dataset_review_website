@@ -34,13 +34,13 @@ stop:
 	@docker compose down
 
 shell:
-	@docker exec -ti -u $$(whoami) -w /root/task_decomposition_website tdw bash -l
+	@docker exec -ti -u $$(whoami) -w /root/dataset_review_website dataset-review-website bash -l
 
 shell-db:
-	@docker exec -it tdw-db psql -U tdw -d tdw-db
+	@docker exec -it website-db psql -U frank-Regal -d website-db
 
 build:
 	@COMPOSE_BAKE=true docker compose build
 
 log:
-	@docker logs tdw
+	@docker logs dataset-review-website
