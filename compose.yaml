@@ -1,9 +1,9 @@
 services:
 
-  tdw:
+  dataset-review-website:
     extends:
       file: docker/compose.yaml
-      service: tdw
+      service: dataset-review-website
     depends_on:
       - database
     env_file:
@@ -11,11 +11,11 @@ services:
 
   database:
     image: postgres:15
-    container_name: tdw-db
+    container_name: website-db
     environment:
-      - POSTGRES_USER=tdw
+      - POSTGRES_USER=frank-Regal
       - POSTGRES_PASSWORD=inOrbit
-      - POSTGRES_DB=tdw-db
+      - POSTGRES_DB=website-db
     ports:
       - "5433:5432"
     volumes:
@@ -23,13 +23,13 @@ services:
 
   postgrest:
     image: postgrest/postgrest
-    container_name: tdw-db-api
+    container_name: website-db-api
     ports:
       - "3001:3000"
     environment:
-      PGRST_DB_URI: postgres://tdw:inOrbit@database:5432/tdw-db
+      PGRST_DB_URI: postgres://frank-Regal:inOrbit@database:5432/website-db
       PGRST_DB_SCHEMA: public
-      PGRST_DB_ANON_ROLE: tdw
+      PGRST_DB_ANON_ROLE: frank-Regal
     depends_on:
       - database
 
