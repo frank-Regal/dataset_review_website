@@ -13,10 +13,11 @@ make build
 ```
 ### Configure Parameters
 1. Make a copy of `config.env.example`
+   
    ```shell
    cp config.env.example config.env
    ```
-2. Configure the following with your specific parameters
+3. Configure the following with your specific parameters
    - `NODE_ENV` - "development" or "production"
    - `DATABASE_URL` - `postgresql://<username>:<password>@<host_url>:5432/<database_name>`
    - `PORT` - port to run the web interface on
