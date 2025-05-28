@@ -7,7 +7,7 @@ services:
     depends_on:
       - database
     env_file:
-      - .env
+      - config.env
 
   database:
     image: postgres:15
