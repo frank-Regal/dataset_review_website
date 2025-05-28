@@ -3,7 +3,7 @@
 This repo creates a basic web interface for multiple users to review multiple videos from a dataset.
 
 
-> This repo is based on [jsalfity/task_decomposition_website](https://github.com/jsalfity/task_decomposition_website), but heavily modified for this specific use case
+> This repo is based on [jsalfity/task_decomposition_website](https://github.com/jsalfity/task_decomposition_website) and heavily modified for the specific use cases here
 
 
 ## Setup
