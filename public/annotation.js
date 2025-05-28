@@ -11,12 +11,65 @@ function loadVideoFromURL() {
     if (videoFilename) {
         const videoPlayer = document.getElementById('videoPlayer');
         // videoPlayer.src = `/videos/${videoFilename}`; // Local path
-        // videoPlayer.src = `https://storage.googleapis.com/robot_traj_videos/all/${videoFilename}`;
-        videoPlayer.src = `/videos/${videoFilename}`; // Local path
+        videoPlayer.src = `https://storage.googleapis.com/robot_traj_videos/all/${videoFilename}`;
         videoPlayer.load();
         resetTimer(); // Reset the timer for tracking how long the user spends on this video
     } else {
         document.getElementById('feedback').textContent = 'No video selected.';
+    }
+}
+
+// function nextVideo() {
+//     window.location.href = '/index.html';
+// }
+
+async function getVideoList() {
+    try {
+        const response = await fetch('/videos');
+        const data = await response.json();
+        videos = data.videos;
+    } catch (error) {
+        console.error('Error fetching video list:', error);
+    }
+}
+
+async function nextVideo() {
+    // If we haven't loaded the video list yet, load it
+    if (videos.length === 0) {
+        await getVideoList();
+    }
+    
+    // Get current video from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentVideo = urlParams.get('video');
+    
+    // Find the index of the current video
+    const currentIndex = videos.indexOf(currentVideo);
+    
+    // If we found the current video and there's a next video
+    if (currentIndex !== -1 && currentIndex < videos.length - 1) {
+        const nextVideoFilename = videos[currentIndex + 1];
+        
+        // Clear current annotations
+        annotations = [];
+        document.getElementById('annotations').innerHTML = '';
+        document.getElementById('subtask-placeholder').style.display = 'block';
+        
+        // Update URL and load next video
+        const newUrl = `${window.location.pathname}?video=${nextVideoFilename}`;
+        window.history.pushState({}, '', newUrl);
+        
+        const videoPlayer = document.getElementById('videoPlayer');
+        videoPlayer.src = `https://storage.googleapis.com/robot_traj_videos/all/${nextVideoFilename}`;
+        videoPlayer.load();
+        
+        // Reset timer for the new video
+        resetTimer();
+        
+        // Clear feedback message
+        document.getElementById('feedback').textContent = '';
+    } else {
+        document.getElementById('feedback').textContent = 'This is the last video in the sequence.';
     }
 }
 
@@ -184,4 +237,8 @@ function loadUsername() {
 window.addEventListener('load', loadUsername);
 
 // Load the video and setup the page when it loads
-window.onload = loadVideoFromURL;
+window.onload = async function() {
+    await getVideoList();
+    loadVideoFromURL();
+    loadUsername();
+}

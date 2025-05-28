@@ -115,6 +115,26 @@ const setupRoutes = (app, client, tableNames) => {
         res.sendFile(path.join(__dirname, 'public', 'annotate.html'));
     });
 
+    app.get('/videos', (_, res) => {
+        try {
+            const videos = loadVideos();
+            res.json({ videos });
+        } catch (err) {
+            console.error('Error fetching videos:', err);
+            res.status(500).json({ error: 'Server error', details: err.message });
+        }
+    });
+
+    app.get('/videos/', (_, res) => {
+        try {
+            const videos = loadVideos();
+            res.json({ videos });
+        } catch (err) {
+            console.error('Error fetching videos:', err);
+            res.status(500).json({ error: 'Server error', details: err.message });
+        }
+    });
+
     app.get('/video-progress', async (_, res) => {
         try {
             const videos = loadVideos();
