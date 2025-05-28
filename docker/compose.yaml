@@ -1,0 +1,43 @@
+services:
+  tdw:
+    # Basic container configuration
+    image: fregal/tdw:latest
+    container_name: tdw
+    network_mode: host
+    
+    # Build configuration
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - HOST_USER=${UNAME}
+        - HOST_UID_GID=${UID_GID}
+    # Runtime configuration
+    entrypoint: /entrypoint.sh -u "$UID_GID" -n "$UNAME"
+    stdin_open: true 
+    tty: true
+    
+    # Environment configuration
+    environment:
+      - DISPLAY=${DISPLAY}
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - NVIDIA_VISIBLE_DEVICES=all
+      - CHOKIDAR_USEPOLLING=true  # Enable hot reloading in Docker
+      - WATCHPACK_POLLING=true     # Enable webpack file watching
+    
+    env_file:
+      - variables.env
+
+    # Security configuration
+    security_opt:
+      - apparmor:unconfined
+      
+    # Volume mounts
+    volumes:
+      - ../../task_decomposition_website:/root/task_decomposition_website
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /dev/dri:/dev/dri
+      - ${HOME}/.Xauthority:/root/.Xauthority:rw
+
+    working_dir: /root/task_decomposition_website
+    command: sh -c "npm install"
