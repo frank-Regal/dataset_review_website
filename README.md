@@ -17,6 +17,7 @@ make build
    ```shell
    cp config.env.example config.env
    ```
+   
 3. Configure the following with your specific parameters
    - `NODE_ENV` - "development" or "production"
    - `DATABASE_URL` - `postgresql://<username>:<password>@<host_url>:5432/<database_name>`
