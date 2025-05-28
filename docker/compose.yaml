@@ -1,8 +1,8 @@
 services:
-  tdw:
+  dataset-review-website:
     # Basic container configuration
-    image: fregal/tdw:latest
-    container_name: tdw
+    image: fregal/dataset-review-website:latest
+    container_name: dataset-review-website
     network_mode: host
     
     # Build configuration
@@ -34,10 +34,10 @@ services:
       
     # Volume mounts
     volumes:
-      - ../../task_decomposition_website:/root/task_decomposition_website
+      - ../../dataset_review_website:/root/dataset_review_website
       - /tmp/.X11-unix:/tmp/.X11-unix
       - /dev/dri:/dev/dri
       - ${HOME}/.Xauthority:/root/.Xauthority:rw
 
-    working_dir: /root/task_decomposition_website
+    working_dir: /root/dataset_review_website
     command: sh -c "npm install"
