@@ -20,7 +20,7 @@ make build
    
 3. Configure the following with your specific parameters
    - `NODE_ENV` - "development" or "production"
-   - `DATABASE_URL` - `postgresql://<username>:<password>@<host_url>:5432/<database_name>`
+   - `DATABASE_URL` - `postgresql://<username>:<password>@<host_url>:<database_port>/<database_name>`
    - `PORT` - port to run the web interface on
    - `MAX_ANNOTATIONS_PER_VIDEO` - how many annotations you require per video
 
