@@ -73,6 +73,46 @@ async function nextVideo() {
     }
 }
 
+async function previousVideo() {
+    // If we haven't loaded the video list yet, load it
+    if (videos.length === 0) {
+        await getVideoList();
+    }
+    
+    // Get current video from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentVideo = urlParams.get('video');
+    
+    // Find the index of the current video
+    const currentIndex = videos.indexOf(currentVideo);
+    
+    // If we found the current video and there's a previous video
+    if (currentIndex !== -1 && currentIndex > 0) {
+        const previousVideoFilename = videos[currentIndex - 1];
+        
+        // Clear current annotations
+        annotations = [];
+        document.getElementById('annotations').innerHTML = '';
+        document.getElementById('subtask-placeholder').style.display = 'block';
+        
+        // Update URL and load previous video
+        const newUrl = `${window.location.pathname}?video=${previousVideoFilename}`;
+        window.history.pushState({}, '', newUrl);
+        
+        const videoPlayer = document.getElementById('videoPlayer');
+        videoPlayer.src = `https://storage.googleapis.com/robot_traj_videos/all/${previousVideoFilename}`;
+        videoPlayer.load();
+        
+        // Reset timer for the new video
+        resetTimer();
+        
+        // Clear feedback message
+        document.getElementById('feedback').textContent = '';
+    } else {
+        document.getElementById('feedback').textContent = 'This is the first video in the sequence.';
+    }
+}
+
 // Function to reset and start the timer
 function resetTimer() {
     startTime = Date.now(); // Reset the start time to the current time
