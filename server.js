@@ -163,12 +163,6 @@ const setupRoutes = (app, client, tableNames) => {
 
     app.post('/save', async (req, res) => {
         const { username, video, status } = req.body;
-        console.log('Saving to database:', {
-            username: username,
-            video: video,
-            status: status,
-            statusType: typeof status
-        });
         
         // Add validation
         if (!status) {
@@ -178,20 +172,52 @@ const setupRoutes = (app, client, tableNames) => {
 
         try {
             await client.query('BEGIN');
-            console.log('Starting database transaction');
 
-            // Insert new annotation
-            const { rows } = await client.query(
-                `INSERT INTO ${tableNames.annotations} (username, video_filename, created_at, status)
-                     VALUES ($1, $2, CURRENT_TIMESTAMP, $3) RETURNING id`,
-                [username, video, status]
-            );
-            console.log('Insert successful, rows:', rows);
-            const annotationId = rows[0].id;
+            // First check if entry exists
+            const checkQuery = `
+                SELECT id FROM ${tableNames.annotations} 
+                WHERE video_filename = $1
+            `;
+            const existingEntry = await client.query(checkQuery, [video]);
+
+            let annotationId;
+            if (existingEntry.rows.length > 0) {
+                // Update existing entry
+                const updateQuery = `
+                    UPDATE ${tableNames.annotations} 
+                    SET username = $1, status = $2, created_at = CURRENT_TIMESTAMP
+                    WHERE id = $3
+                    RETURNING id
+                `;
+                const { rows } = await client.query(updateQuery, [username, status, existingEntry.rows[0].id]);
+                annotationId = rows[0].id;
+                console.log('Updated existing entry:', {
+                    id: existingEntry.rows[0].id,
+                    username: username,
+                    video: video,
+                    status: status,
+                });
+            } else {
+                // Insert new entry
+                const { rows } = await client.query(
+                    `INSERT INTO ${tableNames.annotations} (username, video_filename, created_at, status)
+                         VALUES ($1, $2, CURRENT_TIMESTAMP, $3) RETURNING id`,
+                    [username, video, status]
+                );
+                annotationId = rows[0].id;
+                console.log('Created new entry:', {
+                    id: annotationId,
+                    username: username,
+                    video: video,
+                    status: status,
+                });
+            }
 
             await client.query('COMMIT');
-            console.log('Transaction committed');
-            res.json({ message: 'Annotation saved successfully!' });
+            res.json({ 
+                message: existingEntry.rows.length > 0 ? 'Annotation updated successfully!' : 'Annotation saved successfully!',
+                annotationId: annotationId
+            });
         } catch (err) {
             await client.query('ROLLBACK');
             console.error('Detailed error saving annotation:', {
