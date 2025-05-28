@@ -55,17 +55,33 @@
 
         /* Styling for buttons */
         .green-button {
-        background-color: green;
-        color: white;
+        background-color: #47a855;
+        color: black;
         padding: 10px;
         border-radius: 5px;
         border: none; /* Remove default border */
         cursor: pointer; /* Change cursor to pointer */
         text-align: left;
+        font-weight: bold;
         }
 
         .green-button:hover {
-            background-color: darkgreen; /* Slightly darker green on hover */
+            background-color: #31753b; /* Slightly darker green on hover */
+        }
+
+        .yellow-button {
+            background-color: #f3bf24;
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+            border: none; /* Remove default border */
+            cursor: pointer; /* Change cursor to pointer */
+            text-align: left;
+            font-weight: bold;
+            }
+    
+        .yellow-button:hover {
+            background-color: #c0961c; /* Slightly darker green on hover */
         }
 
         /*red button*/
@@ -77,24 +93,42 @@
         border: none; /* Remove default border */
         cursor: pointer; /* Change cursor to pointer */
         text-align: left;
+        font-weight: bold;
         }
 
         .red-button:hover {
             background-color: darkred; /* Slightly darker green on hover */
         }
 
-        .blue-button {
-            background-color: blue;
+        /*gray button*/
+        .gray-button {
+            background-color: gray;
             color: white;
             padding: 10px;
             border-radius: 5px;
             border: none; /* Remove default border */
             cursor: pointer; /* Change cursor to pointer */
             text-align: left;
+            font-weight: bold;
+            }
+    
+        .gray-button:hover {
+            background-color: darkgray; /* Slightly darker green on hover */
+        }
+
+        .blue-button {
+            background-color: #5885f2;
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+            border: none; /* Remove default border */
+            cursor: pointer; /* Change cursor to pointer */
+            text-align: left;
+            font-weight: bold;
         }
 
         .blue-button:hover {
-            background-color: darkblue; /* Slightly darker green on hover */
+            background-color: #4568bf; /* Slightly darker green on hover */
         }
 
     </style>
@@ -103,24 +137,28 @@
 
     <!-- Left column: Video and annotation input -->
     <div id="main-container">
+        <div>
+            <button onclick="window.location.href = '/';" class="gray-button">Back</button>
+        </div>
         <h1>Review Video</h1>
         <div id="user-progress"></div>
 
+
         <!-- Video player -->
         <div id="video-container">
-            <video id="videoPlayer" width="640" controls>
+            <video id="videoPlayer" width="640" controls autoplay>
                 Your browser does not support the video tag.
             </video>
         </div>
 
         <!-- Username input -->
-        <div>
+        <!-- <div>
             <label for="username">Username:</label>
             <input type="text" id="username" onchange="saveUsername()" placeholder="Enter your username">
-        </div>
+        </div> -->
 
         <!-- Form to input subtasks -->
-        <div>
+        <!-- <div>
             <label for="startStep">Start Step:</label>
             <input type="number" id="startStep" min="0" placeholder="<insert>" style="width: 65px; font-style: italic;">
 
@@ -131,15 +169,15 @@
             <input type="text" id="subtask" placeholder="<insert>"  style="width: 200px; font-style: italic;">
 
             <button onclick="addSubtask()">Add to Subtask Decomposition</button>
-        </div>
+        </div> -->
 
         <!-- Display the current list of subtasks -->
         <div id="annotation-list">
-            <h3>Subtask Decomposition:</h3>
+            <h3>Make a selection</h3>
 
             <!-- Placeholder message that will be shown until the first subtask is added -->
             <div id="subtask-placeholder" style="color: gray; font-style: italic;">
-                No subtasks added yet.
+                Make sure left limbs are blue and right limbs are yellow.
             </div>
 
             <ul id="annotations"></ul>
@@ -148,9 +186,8 @@
         <!-- Save button -->
         <div>
             <button onclick="previousVideo()" class="blue-button">Previous Video</button>
-            <button onclick="saveAnnotation()" class="green-button">Save Annotation &<br>Exit to Homepage.</button>
-            <button onclick="window.location.href = '/';" class="red-button">Do Not Save &<br>Exit to Homepage.</button>
             <button onclick="nextVideo()" class="green-button">Next Video</button>
+            <button onclick="markForReview()" class="yellow-button">Mark for Review</button>
         </div>
 
         <!-- Feedback message -->

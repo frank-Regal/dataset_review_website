@@ -113,6 +113,15 @@ async function previousVideo() {
     }
 }
 
+function markForReview() {
+    
+    // const urlParams = new URLSearchParams(window.location.search);
+    // const videoFilename = urlParams.get('video');
+    // const video = videos.find(v => v.filename === videoFilename);
+    // video.reviewed = true;
+    // saveVideoList();
+}
+
 // Function to reset and start the timer
 function resetTimer() {
     startTime = Date.now(); // Reset the start time to the current time
