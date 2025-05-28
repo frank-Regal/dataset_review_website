@@ -27,14 +27,27 @@ make build
 ## Run
 > Note this starts everything (website server, database, and restful api)
 
-```shell
-make start
-```
+1. Start the containers
 
-```shell
-make shell
-```
+   ```shell
+   make start
+   ```
 
-```shell
-npm start
-```
+2. Open a develoment shell
+      
+   ```shell
+   make shell
+   ```
+
+3. Start the front end website
+   > Note: There is a known bug with the docker setup. If the web interface throws an error here, you may need to run `npm install` first and then run the following command.
+   ```shell
+   npm start
+   ```
+
+## Inferface
+1. Open the following link in your browser
+
+   ```shell
+   http://localhost:3000
+   ```
