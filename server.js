@@ -40,7 +40,8 @@ const createTables = async (client, tableNames) => {
                 id SERIAL PRIMARY KEY,
                 username VARCHAR(255) NOT NULL,
                 video_filename VARCHAR(255) NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                status VARCHAR(255) NOT NULL
             );
             CREATE TABLE IF NOT EXISTS ${tableNames.subtasks} (
                 id SERIAL PRIMARY KEY,
@@ -125,16 +126,6 @@ const setupRoutes = (app, client, tableNames) => {
         }
     });
 
-    app.get('/videos/', (_, res) => {
-        try {
-            const videos = loadVideos();
-            res.json({ videos });
-        } catch (err) {
-            console.error('Error fetching videos:', err);
-            res.status(500).json({ error: 'Server error', details: err.message });
-        }
-    });
-
     app.get('/video-progress', async (_, res) => {
         try {
             const videos = loadVideos();
@@ -171,34 +162,45 @@ const setupRoutes = (app, client, tableNames) => {
     });
 
     app.post('/save', async (req, res) => {
-        const { username, video, annotations: userAnnotations } = req.body;
+        const { username, video, status } = req.body;
+        console.log('Saving to database:', {
+            username: username,
+            video: video,
+            status: status,
+            statusType: typeof status
+        });
+        
+        // Add validation
+        if (!status) {
+            console.error('Status is missing or null');
+            return res.status(400).json({ error: 'Status is required' });
+        }
+
         try {
             await client.query('BEGIN');
+            console.log('Starting database transaction');
 
             // Insert new annotation
             const { rows } = await client.query(
-                `INSERT INTO ${tableNames.annotations} (username, video_filename, created_at)
-                     VALUES ($1, $2, CURRENT_TIMESTAMP) RETURNING id`,
-                [username, video]
+                `INSERT INTO ${tableNames.annotations} (username, video_filename, created_at, status)
+                     VALUES ($1, $2, CURRENT_TIMESTAMP, $3) RETURNING id`,
+                [username, video, status]
             );
+            console.log('Insert successful, rows:', rows);
             const annotationId = rows[0].id;
 
-
-            // Insert new subtasks
-            for (const subtask of userAnnotations) {
-                await client.query(
-                    `INSERT INTO ${tableNames.subtasks} (start_step, end_step, subtask, time_spent, annotation_id)
-                     VALUES ($1, $2, $3, $4, $5)`,
-                    [subtask.startStep, subtask.endStep, subtask.subtask, subtask.timeSpent, annotationId]
-                );
-            }
-
             await client.query('COMMIT');
-            res.json({ message: 'Annotation and subtasks saved successfully!' });
+            console.log('Transaction committed');
+            res.json({ message: 'Annotation saved successfully!' });
         } catch (err) {
             await client.query('ROLLBACK');
-            console.error('Error saving annotation:', err);
-            res.status(500).json({ error: `Database error: ${err}` });
+            console.error('Detailed error saving annotation:', {
+                error: err,
+                message: err.message,
+                stack: err.stack,
+                body: req.body
+            });
+            res.status(500).json({ error: `Database error: ${err.message}` });
         }
     });
 };

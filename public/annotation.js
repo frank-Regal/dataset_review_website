@@ -49,7 +49,25 @@ async function nextVideo() {
     // If we found the current video and there's a next video
     if (currentIndex !== -1 && currentIndex < videos.length - 1) {
         const nextVideoFilename = videos[currentIndex + 1];
-        
+
+        // Post entry to database for current video
+        const annotationData = {
+            username: 'anonymous', // Since username input is commented out
+            video: currentVideo,
+            status: 'correct'
+        };
+
+        try {
+            await fetch('/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(annotationData),
+            });
+        } catch (error) {
+            console.error('Error saving annotation:', error);
+        }
         // Clear current annotations
         annotations = [];
         document.getElementById('annotations').innerHTML = '';
