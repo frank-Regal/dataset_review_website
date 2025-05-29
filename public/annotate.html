@@ -28,7 +28,7 @@
 
         /* Styling for video player and annotation form */
         #video-container {
-            margin-bottom: 20px;
+            margin-bottom: 5px;
         }
 
         #annotation-list {
@@ -140,7 +140,12 @@
         <div>
             <button onclick="window.location.href = '/';" class="gray-button">Back</button>
         </div>
-        <h1>Review Video</h1>
+        <!-- <h1>Review Video</h1> -->
+        <br>
+        <div id="subtask-placeholder" style="color: gray; font-style: italic;">
+            <span id="video-name"></span>
+        </div>
+        <br>
         <div id="user-progress"></div>
 
 
@@ -170,25 +175,26 @@
 
             <button onclick="addSubtask()">Add to Subtask Decomposition</button>
         </div> -->
-
-        <!-- Display the current list of subtasks -->
-        <div id="annotation-list">
-            <h3>Make a selection</h3>
-
-            <!-- Placeholder message that will be shown until the first subtask is added -->
-            <div id="subtask-placeholder" style="color: gray; font-style: italic;">
-                Make sure left limbs are blue and right limbs are yellow.
-            </div>
-
-            <ul id="annotations"></ul>
-        </div>
-
         <!-- Save button -->
         <div>
             <button onclick="previousVideo()" class="blue-button">Previous Video</button>
             <button onclick="nextVideo()" class="green-button">Next Video</button>
             <button onclick="markForReview()" class="yellow-button">Mark for Review</button>
         </div>
+        
+
+        <!-- Display the current list of subtasks -->
+        <div id="annotation-list">
+            <!-- <h3>Make a selection</h3> -->
+
+            <!-- Placeholder message that will be shown until the first subtask is added -->
+            <div id="subtask-placeholder" style="color: gray; font-style: italic;">
+
+            </div>
+
+            <ul id="annotations"></ul>
+        </div>
+
 
         <!-- Feedback message -->
         <div id="feedback"></div>
@@ -230,6 +236,5 @@
 
     <!-- Include the app.js file -->
     <script src="annotation.js"></script>
-
 </body>
 </html>

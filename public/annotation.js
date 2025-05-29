@@ -87,10 +87,30 @@ async function nextVideo() {
         
         // Clear feedback message
         document.getElementById('feedback').textContent = '';
+        
+        // Update the video name display
+        updateVideoName();
     } else {
         document.getElementById('feedback').textContent = 'This is the last video in the sequence.';
     }
 }
+
+
+// Get video name from URL and display it
+function updateVideoName() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const videoName = urlParams.get('video');
+    if (videoName) {
+        document.getElementById('video-name').textContent = videoName;
+    }
+}
+
+// Update video name on initial load
+window.addEventListener('load', updateVideoName);
+
+// Update video name when navigation occurs
+window.addEventListener('popstate', updateVideoName);
+
 
 async function previousVideo() {
     // If we haven't loaded the video list yet, load it
@@ -127,6 +147,9 @@ async function previousVideo() {
         
         // Clear feedback message
         document.getElementById('feedback').textContent = '';
+        
+        // Update the video name display
+        updateVideoName();
     } else {
         document.getElementById('feedback').textContent = 'This is the first video in the sequence.';
     }
@@ -186,6 +209,9 @@ async function markForReview() {
         
         // Clear feedback message
         document.getElementById('feedback').textContent = '';
+        
+        // Update the video name display
+        updateVideoName();
     } else {
         document.getElementById('feedback').textContent = 'This is the last video in the sequence.';
     }
