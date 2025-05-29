@@ -4,6 +4,27 @@ let annotations = [];
 let startTime = 0; // Track time spent on each video
 let isFastSpeed = true; // Track current speed state
 let isPlaying = true; // Track play/pause state
+let frameRate = 30; // Default frame rate (will be updated when video loads)
+let normalSpeed = 0.33; // was 2.0 for 10 fps
+let sloMoSpeed = 0.1; // was 0.2 for 10 fps
+
+// Function to get current frame number
+function getCurrentFrame() {
+    const videoPlayer = document.getElementById('videoPlayer');
+    const currentTime = videoPlayer.currentTime;
+    const playbackRate = videoPlayer.playbackRate;
+    // Adjust the frame calculation based on playback rate
+    // For normal speed (2.0x), we need to divide by 2 to get the actual frame
+    // For slo-mo (0.2x), we need to multiply by 5 to get the actual frame
+    const speedFactor = isFastSpeed ? normalSpeed : sloMoSpeed;
+    return Math.floor(currentTime * frameRate * speedFactor);
+}
+
+// Function to update frame number display
+function updateFrameNumber() {
+    const frameNumber = getCurrentFrame();
+    document.getElementById('frame-number').textContent = `Frame: ${frameNumber}`;
+}
 
 // Load the video based on the query parameter from the URL
 function loadVideoFromURL() {
@@ -16,7 +37,7 @@ function loadVideoFromURL() {
         // For local development, check if video exists in root directory first
         // videoPlayer.src = `https://storage.googleapis.com/robot_traj_videos/all/${videoFilename}`; // Google Cloud Storage path
         videoPlayer.load();
-        videoPlayer.playbackRate = isFastSpeed ? 2.0 : 0.2; // Set playback speed based on current state
+        videoPlayer.playbackRate = isFastSpeed ? normalSpeed : sloMoSpeed; // Set playback speed based on current state
         resetTimer(); // Reset the timer for tracking how long the user spends on this video
         
         // Set initial play/pause state
@@ -26,6 +47,9 @@ function loadVideoFromURL() {
         // Update speed button text
         const speedButton = document.querySelector('button[onclick="togglePlaybackSpeed()"]');
         speedButton.textContent = `${isFastSpeed ? 'Slo-Mo' : 'Normal'}`;
+
+        // Add timeupdate event listener to update frame number during playback
+        videoPlayer.ontimeupdate = updateFrameNumber;
     } else {
         document.getElementById('feedback').textContent = 'No video selected.';
     }
@@ -375,7 +399,7 @@ window.onload = async function() {
 function togglePlaybackSpeed() {
     const videoPlayer = document.getElementById('videoPlayer');
     isFastSpeed = !isFastSpeed;
-    videoPlayer.playbackRate = isFastSpeed ? 2.0 : 0.2;
+    videoPlayer.playbackRate = isFastSpeed ? normalSpeed : sloMoSpeed;
     
     // Update button text
     const button = document.querySelector('button[onclick="togglePlaybackSpeed()"]');
