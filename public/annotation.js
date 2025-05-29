@@ -8,6 +8,9 @@ let frameRate = 30; // Default frame rate (will be updated when video loads)
 let normalSpeed = 0.33; // was 2.0 for 10 fps
 let sloMoSpeed = 0.1; // was 0.2 for 10 fps
 let loadDelay = 250; // 250ms delay before proceeding
+let isRecordingRange = false;
+let frameRangeStart = null;
+let frameRanges = [];
 
 // Function to get current frame number
 function getCurrentFrame() {
@@ -156,8 +159,6 @@ async function nextVideo() {
 
             updateButtonStates();
 
-            // document.getElementById('feedback').textContent = 'Verified!';
-
             // Wait for 2 seconds before proceeding
             await new Promise(resolve => setTimeout(resolve, loadDelay));
 
@@ -169,6 +170,10 @@ async function nextVideo() {
         annotations = [];
         document.getElementById('annotations').innerHTML = '';
         document.getElementById('subtask-placeholder').style.display = 'block';
+        
+        // Clear frame ranges
+        frameRanges = [];
+        document.getElementById('frame-ranges-list').innerHTML = '';
         
         // Update URL and load next video
         const newUrl = `${window.location.pathname}?video=${nextVideoFilename}`;
@@ -231,7 +236,6 @@ async function previousVideo() {
 }
 
 async function markForReview() {
-    
     // If we haven't loaded the video list yet, load it
     if (videos.length === 0) {
         await getVideoList();
@@ -271,17 +275,21 @@ async function markForReview() {
 
             updateButtonStates();
 
-            // document.getElementById('feedback').textContent = 'Marked to revisit!';
             // Wait for 2 seconds before proceeding
             await new Promise(resolve => setTimeout(resolve, loadDelay));
             
         } catch (error) {
             console.error('Error saving annotation:', error);
         }
+        
         // Clear current annotations
         annotations = [];
         document.getElementById('annotations').innerHTML = '';
         document.getElementById('subtask-placeholder').style.display = 'block';
+        
+        // Clear frame ranges
+        frameRanges = [];
+        document.getElementById('frame-ranges-list').innerHTML = '';
         
         // Update URL and load next video
         const newUrl = `${window.location.pathname}?video=${nextVideoFilename}`;
@@ -523,5 +531,66 @@ document.addEventListener('keydown', function(event) {
         case 'Enter':
             markForReview();
             break;
+        // case 'KeyR':
+        //     event.preventDefault();
+        //     toggleFrameRange();
+        //     break;
     }
 });
+
+// Function to toggle frame range recording
+function toggleFrameRange() {
+    const button = document.getElementById('frameRangeButton');
+    const currentFrame = getCurrentFrame();
+    
+    if (!isRecordingRange) {
+        // Start recording a new range
+        isRecordingRange = true;
+        frameRangeStart = currentFrame;
+        button.textContent = `End Range (${frameRangeStart})`;
+        button.style.backgroundColor = '#ff6b6b'; // Red color to indicate recording
+    } else {
+        // End recording the range
+        isRecordingRange = false;
+        const frameRangeEnd = currentFrame;
+        
+        // Only save if end frame is after start frame
+        if (frameRangeEnd > frameRangeStart) {
+            frameRanges.push({
+                start: frameRangeStart,
+                end: frameRangeEnd
+            });
+            
+            // Update the display of recorded ranges
+            updateFrameRangesDisplay();
+            
+            // Show feedback
+            document.getElementById('feedback').textContent = 
+                `Recorded frame range: ${frameRangeStart} - ${frameRangeEnd}`;
+        }
+        
+        button.textContent = 'Record Range';
+        button.style.backgroundColor = ''; // Reset to default gray
+    }
+}
+
+// Function to update the display of recorded ranges
+function updateFrameRangesDisplay() {
+    const rangesList = document.getElementById('frame-ranges-list');
+    if (!rangesList) return;
+    
+    rangesList.innerHTML = frameRanges.map((range, index) => `
+        <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+            <span>Range ${index + 1}: ${range.start} - ${range.end}</span>
+            <button onclick="deleteFrameRange(${index})" class="gray-button" style="padding: 4px 8px; margin: 0;">×</button>
+        </li>
+    `).join('');
+}
+
+// Function to delete a frame range
+function deleteFrameRange(index) {
+    // Remove the range from the array
+    frameRanges.splice(index, 1);
+    // Update the display
+    updateFrameRangesDisplay();
+}
