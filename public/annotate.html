@@ -165,12 +165,17 @@
             <div id="frame-number" style="color: gray; font-size: 0.9em; margin-top: 5px;">Frame: 0</div>
         </div>
 
+        <!-- Display the current list of subtasks -->
+        <div id="annotation-list">
+            <button onclick="togglePlaybackSpeed()" class="gray-button" id="speedButton" title="Toggle Speed (↑)">Normal</button>
+            <button onclick="togglePlayPause()" class="gray-button" id="playPauseButton" title="Play/Pause (Space)">Pause</button>
+        </div>
+
         <div class="controls-container">
             <button onclick="previousVideo()" class="blue-button" title="Previous Video (←)">Previous Video</button>
             <button onclick="markForReview()" class="yellow-button" title="Mark for Review (Enter)">Mark for Review</button>
             <button onclick="nextVideo()" class="green-button" title="Verify (→)">Verify</button>
-            <button onclick="togglePlaybackSpeed()" class="gray-button" id="speedButton" title="Toggle Speed (↑)">Normal</button>
-            <button onclick="togglePlayPause()" class="gray-button" id="playPauseButton" title="Play/Pause (Space)">Pause</button>
+
         </div>
 
         <div id="annotation-list">
