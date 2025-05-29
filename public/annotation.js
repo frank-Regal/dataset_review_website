@@ -156,7 +156,7 @@ async function nextVideo() {
 
             updateButtonStates();
 
-            document.getElementById('feedback').textContent = 'Verified!';
+            // document.getElementById('feedback').textContent = 'Verified!';
 
             // Wait for 2 seconds before proceeding
             await new Promise(resolve => setTimeout(resolve, loadDelay));
@@ -271,7 +271,7 @@ async function markForReview() {
 
             updateButtonStates();
 
-            document.getElementById('feedback').textContent = 'Marked to revisit!';
+            // document.getElementById('feedback').textContent = 'Marked to revisit!';
             // Wait for 2 seconds before proceeding
             await new Promise(resolve => setTimeout(resolve, loadDelay));
             

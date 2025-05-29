@@ -160,7 +160,7 @@
 
         /* Status text styles */
         .status-text {
-            margin-left: 10px;
+            margin-left: 0px;
             font-weight: bold;
         }
         .todo-text {
@@ -185,7 +185,6 @@
         
         <div id="subtask-placeholder" style="color: gray; font-style: italic; padding-top: 10px; padding-bottom: 10px;">
             <span id="video-name"></span>
-            <span id="video-status" class="status-text"></span>
         </div>
         
         <div id="user-progress"></div>
@@ -194,19 +193,21 @@
             <video id="videoPlayer" controls autoplay loop controlsList="nodownload nocaptions" disablePictureInPicture playsinline>
                 Your browser does not support the video tag.
             </video>
-            <div id="frame-number" style="color: gray; font-size: 0.9em; margin-top: 5px;">Frame: 0</div>
+            <!-- <div id="frame-number" style="color: gray; font-size: 0.9em; margin-top: 5px;">Frame: 0</div> -->
+            <div id="video-status" class="status-text"></div>
         </div>
 
         <!-- Display the current list of subtasks -->
         <div id="annotation-list">
-            <button onclick="togglePlaybackSpeed()" class="gray-button" id="speedButton" title="Toggle Speed (↑)">Normal</button>
-            <button onclick="togglePlayPause()" class="gray-button" id="playPauseButton" title="Play/Pause (Space)">Pause</button>
+            
+            <button onclick="togglePlaybackSpeed()" class="gray-button" id="speedButton" title="Toggle Playback Speed (↑/↓)">Normal</button>
+            <button onclick="togglePlayPause()" class="gray-button" id="playPauseButton" title="Play/Pause Video (Space Bar)">Pause</button>
         </div>
 
         <div class="controls-container">
-            <button onclick="previousVideo()" class="blue-button" title="Previous Video (←)">Previous Video</button>
+            <button onclick="previousVideo()" class="blue-button" title="Navigate to Previous Video (←)">Previous Video</button>
             <button onclick="markForReview()" class="yellow-button" title="Mark for Review (Enter)">Mark for Review</button>
-            <button onclick="nextVideo()" class="green-button" title="Verify (→)">Verify</button>
+            <button onclick="nextVideo()" class="green-button" title="Mark as Verified and Navigate to Next Video (→)">Verify</button>
 
         </div>
 
