@@ -4,9 +4,9 @@ let annotations = [];
 let startTime = 0; // Track time spent on each video
 let isFastSpeed = true; // Track current speed state
 let isPlaying = true; // Track play/pause state
-let frameRate = 30; // Default frame rate (will be updated when video loads)
+let frameRate = 30; // User Specified Frame Rate
 let normalSpeed = 1; // was 2.0 for 10 fps
-let sloMoSpeed = 1; // was 0.2 for 10 fps
+let sloMoSpeed = 0.33; // was 0.2 for 10 fps
 let loadDelay = 250; // 250ms delay before proceeding
 let isRecordingRange = false;
 let frameRangeStart = null;
@@ -17,11 +17,8 @@ function getCurrentFrame() {
     const videoPlayer = document.getElementById('videoPlayer');
     const currentTime = videoPlayer.currentTime;
     const playbackRate = videoPlayer.playbackRate;
-    // Adjust the frame calculation based on playback rate
-    // For normal speed (2.0x), we need to divide by 2 to get the actual frame
-    // For slo-mo (0.2x), we need to multiply by 5 to get the actual frame
-    const speedFactor = isFastSpeed ? normalSpeed : sloMoSpeed;
-    return Math.floor(currentTime * frameRate * speedFactor);
+    const playbackTime = currentTime * (1/playbackRate);
+    return Math.floor(playbackTime * frameRate * playbackRate);
 }
 
 // Function to update frame number display
@@ -582,7 +579,7 @@ function toggleFrameRange() {
         // Start recording a new range
         isRecordingRange = true;
         frameRangeStart = currentFrame;
-        button.textContent = `End Range (${frameRangeStart})`;
+        button.textContent = `Save Range (${frameRangeStart})`;
         button.style.backgroundColor = '#ff6b6b'; // Red color to indicate recording
         
         // Add event listener to update frame number
@@ -590,7 +587,7 @@ function toggleFrameRange() {
         const updateFrameDisplay = () => {
             if (isRecordingRange) {
                 const currentFrame = getCurrentFrame();
-                button.textContent = `End Range (${frameRangeStart} - ${currentFrame})`;
+                button.textContent = `Save Range (${frameRangeStart} - ${currentFrame})`;
             }
         };
         videoPlayer.addEventListener('timeupdate', updateFrameDisplay);
@@ -622,7 +619,7 @@ function toggleFrameRange() {
                 `Recorded frame range: ${frameRangeStart} - ${frameRangeEnd}`;
         }
         
-        button.textContent = 'Record Range';
+        button.textContent = 'Mark Frames';
         button.style.backgroundColor = ''; // Reset to default gray
     }
 }
