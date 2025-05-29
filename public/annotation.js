@@ -549,10 +549,28 @@ function toggleFrameRange() {
         frameRangeStart = currentFrame;
         button.textContent = `End Range (${frameRangeStart})`;
         button.style.backgroundColor = '#ff6b6b'; // Red color to indicate recording
+        
+        // Add event listener to update frame number
+        const videoPlayer = document.getElementById('videoPlayer');
+        const updateFrameDisplay = () => {
+            if (isRecordingRange) {
+                const currentFrame = getCurrentFrame();
+                button.textContent = `End Range (${frameRangeStart} - ${currentFrame})`;
+            }
+        };
+        videoPlayer.addEventListener('timeupdate', updateFrameDisplay);
+        button.updateFrameDisplay = updateFrameDisplay; // Store reference to remove later
     } else {
         // End recording the range
         isRecordingRange = false;
         const frameRangeEnd = currentFrame;
+        
+        // Remove the timeupdate event listener
+        const videoPlayer = document.getElementById('videoPlayer');
+        if (button.updateFrameDisplay) {
+            videoPlayer.removeEventListener('timeupdate', button.updateFrameDisplay);
+            button.updateFrameDisplay = null;
+        }
         
         // Only save if end frame is after start frame
         if (frameRangeEnd > frameRangeStart) {
