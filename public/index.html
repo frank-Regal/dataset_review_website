@@ -70,11 +70,11 @@
 
                 // Calculate counts
                 const totalVideos = videos.length;
-                const completedVideos = videos.filter(v => v.status === 'verified').length;
+                const completedVideos = videos.filter(v => v.status === 'todo').length;
                 
                 // Update the h1 title with the count
                 const h1 = document.querySelector('h1');
-                h1.textContent = `Dataset Review Homepage (${completedVideos}/${totalVideos})`;
+                h1.textContent = `Dataset Review Homepage (${totalVideos - completedVideos}/${totalVideos})`;
 
                 // Add numbered entries
                 videos.forEach((videoData, index) => {

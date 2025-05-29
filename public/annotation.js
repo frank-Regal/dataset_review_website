@@ -59,6 +59,16 @@ async function updateVideoStatus() {
             const videoData = videos.find(v => v.video === videoName);
             const status = videoData ? videoData.status : 'todo';
             
+            // Calculate counts
+            const totalVideos = videos.length;
+            const completedVideos = videos.filter(v => v.status === 'todo').length;
+            
+            // Update the header with count
+            const header = document.querySelector('h1');
+            if (header) {
+                header.textContent = `Dataset Review (${totalVideos - completedVideos}/${totalVideos})`;
+            }
+            
             const statusElement = document.getElementById('video-status');
             statusElement.textContent = status.toUpperCase();
             statusElement.className = `${status}-text status-text`;
