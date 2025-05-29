@@ -7,6 +7,7 @@ let isPlaying = true; // Track play/pause state
 let frameRate = 30; // Default frame rate (will be updated when video loads)
 let normalSpeed = 0.33; // was 2.0 for 10 fps
 let sloMoSpeed = 0.1; // was 0.2 for 10 fps
+let loadDelay = 250; // 250ms delay before proceeding
 
 // Function to get current frame number
 function getCurrentFrame() {
@@ -24,6 +25,50 @@ function getCurrentFrame() {
 function updateFrameNumber() {
     const frameNumber = getCurrentFrame();
     document.getElementById('frame-number').textContent = `Frame: ${frameNumber}`;
+}
+
+// Function to update button states based on status
+function updateButtonStates() {
+    const statusElement = document.getElementById('video-status');
+    const status = statusElement.textContent.toLowerCase();
+    const reviewButton = document.querySelector('button[onclick="markForReview()"]');
+    const verifyButton = document.querySelector('button[onclick="nextVideo()"]');
+
+    // Remove selected class from both buttons
+    reviewButton.classList.remove('selected');
+    verifyButton.classList.remove('selected');
+
+    // Add selected class based on status
+    if (status === 'revisit') {
+        reviewButton.classList.add('selected');
+    } else if (status === 'verified') {
+        verifyButton.classList.add('selected');
+    }
+}
+
+// Function to update video status display
+async function updateVideoStatus() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const videoName = urlParams.get('video');
+    
+    if (videoName) {
+        try {
+            const response = await fetch('/video-status');
+            const videos = await response.json();
+            
+            const videoData = videos.find(v => v.video === videoName);
+            const status = videoData ? videoData.status : 'todo';
+            
+            const statusElement = document.getElementById('video-status');
+            statusElement.textContent = status.toUpperCase();
+            statusElement.className = `${status}-text status-text`;
+            
+            // Update button states after status is updated
+            updateButtonStates();
+        } catch (error) {
+            console.error('Error fetching video status:', error);
+        }
+    }
 }
 
 // Load the video based on the query parameter from the URL
@@ -54,6 +99,7 @@ function loadVideoFromURL() {
         document.getElementById('feedback').textContent = 'No video selected.';
     }
     updateVideoName();
+    updateVideoStatus(); // Add this line to update the status
 }
 
 // function nextVideo() {
@@ -102,6 +148,19 @@ async function nextVideo() {
                 },
                 body: JSON.stringify(annotationData),
             });
+
+            // Update status text
+            const statusElement = document.getElementById('video-status');
+            statusElement.textContent = 'VERIFIED';
+            statusElement.className = 'verified-text status-text';
+
+            updateButtonStates();
+
+            document.getElementById('feedback').textContent = 'Verified!';
+
+            // Wait for 2 seconds before proceeding
+            await new Promise(resolve => setTimeout(resolve, loadDelay));
+
         } catch (error) {
             console.error('Error saving annotation:', error);
         } 
@@ -193,7 +252,7 @@ async function markForReview() {
         const annotationData = {
             username: 'anonymous', // Since username input is commented out
             video: currentVideo,
-            status: 'revist'
+            status: 'revisit'
         };
 
         try {
@@ -204,6 +263,18 @@ async function markForReview() {
                 },
                 body: JSON.stringify(annotationData),
             });
+
+            // Update status text
+            const statusElement = document.getElementById('video-status');
+            statusElement.textContent = 'REVISIT';
+            statusElement.className = 'revisit-text status-text';
+
+            updateButtonStates();
+
+            document.getElementById('feedback').textContent = 'Marked to revisit!';
+            // Wait for 2 seconds before proceeding
+            await new Promise(resolve => setTimeout(resolve, loadDelay));
+            
         } catch (error) {
             console.error('Error saving annotation:', error);
         }
