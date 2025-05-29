@@ -17,6 +17,7 @@ function loadVideoFromURL() {
     } else {
         document.getElementById('feedback').textContent = 'No video selected.';
     }
+    updateVideoName();
 }
 
 // function nextVideo() {
@@ -77,19 +78,13 @@ async function nextVideo() {
         // Update URL and load next video
         const newUrl = `${window.location.pathname}?video=${nextVideoFilename}`;
         window.history.pushState({}, '', newUrl);
-        
-        const videoPlayer = document.getElementById('videoPlayer');
-        videoPlayer.src = `https://storage.googleapis.com/robot_traj_videos/all/${nextVideoFilename}`;
-        videoPlayer.load();
+        loadVideoFromURL();
         
         // Reset timer for the new video
         resetTimer();
         
         // Clear feedback message
         document.getElementById('feedback').textContent = '';
-        
-        // Update the video name display
-        updateVideoName();
     } else {
         document.getElementById('feedback').textContent = 'This is the last video in the sequence.';
     }
@@ -104,13 +99,6 @@ function updateVideoName() {
         document.getElementById('video-name').textContent = videoName;
     }
 }
-
-// Update video name on initial load
-window.addEventListener('load', updateVideoName);
-
-// Update video name when navigation occurs
-window.addEventListener('popstate', updateVideoName);
-
 
 async function previousVideo() {
     // If we haven't loaded the video list yet, load it
@@ -138,18 +126,10 @@ async function previousVideo() {
         const newUrl = `${window.location.pathname}?video=${previousVideoFilename}`;
         window.history.pushState({}, '', newUrl);
         
-        const videoPlayer = document.getElementById('videoPlayer');
-        videoPlayer.src = `https://storage.googleapis.com/robot_traj_videos/all/${previousVideoFilename}`;
-        videoPlayer.load();
-        
-        // Reset timer for the new video
-        resetTimer();
+        loadVideoFromURL();
         
         // Clear feedback message
         document.getElementById('feedback').textContent = '';
-        
-        // Update the video name display
-        updateVideoName();
     } else {
         document.getElementById('feedback').textContent = 'This is the first video in the sequence.';
     }
@@ -200,18 +180,10 @@ async function markForReview() {
         const newUrl = `${window.location.pathname}?video=${nextVideoFilename}`;
         window.history.pushState({}, '', newUrl);
         
-        const videoPlayer = document.getElementById('videoPlayer');
-        videoPlayer.src = `https://storage.googleapis.com/robot_traj_videos/all/${nextVideoFilename}`;
-        videoPlayer.load();
-        
-        // Reset timer for the new video
-        resetTimer();
+        loadVideoFromURL();
         
         // Clear feedback message
         document.getElementById('feedback').textContent = '';
-        
-        // Update the video name display
-        updateVideoName();
     } else {
         document.getElementById('feedback').textContent = 'This is the last video in the sequence.';
     }
