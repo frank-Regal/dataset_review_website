@@ -48,12 +48,45 @@
             font-weight: bold;
             color: orange;
         }
+        .name-input-container {
+            margin: 20px 0;
+            margin-top: 10px;
+            margin-left: -3px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            max-width: 600px;
+        }
+        .name-input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+            width: 200px;
+        }
+        .save-name-button {
+            padding: 8px 15px;
+            background-color: #47a855;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .save-name-button:hover {
+            background-color: #31753b;
+        }
     </style>
 </head>
 <body>
 
     <h1>Dataset Review Homepage</h1>
-    <h5>Contact Frank Regal [fregal@utexas.edu] for any difficulties / questions.</h5>
+    Please enter your name below and save before you start!
+
+    <div class="name-input-container">
+        <input type="text" id="reviewerName" class="name-input" placeholder="Enter your name">
+        <button onclick="saveReviewerName()" class="save-name-button">Save Name</button>
+    </div>
+
     <div id="video-list"></div>
 
     <script>
@@ -112,7 +145,52 @@
             }
         }
 
-        window.onload = loadVideoProgress;
+        async function saveReviewerName() {
+            const name = document.getElementById('reviewerName').value.trim();
+            if (!name) {
+                alert('Please enter your name');
+                return;
+            }
+
+            try {
+                const response = await fetch('/save-reviewer-name', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to save name');
+                }
+
+                alert('Name saved successfully!');
+            } catch (error) {
+                console.error('Error saving name:', error);
+                alert('Failed to save name. Please try again.');
+            }
+        }
+
+        // Load saved name when page loads
+        async function loadSavedName() {
+            try {
+                const response = await fetch('/get-reviewer-name');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.name) {
+                        document.getElementById('reviewerName').value = data.name;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading saved name:', error);
+            }
+        }
+
+        window.onload = function() {
+            loadVideoProgress();
+            loadSavedName();
+        };
     </script>
 
 </body>

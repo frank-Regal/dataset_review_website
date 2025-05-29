@@ -202,9 +202,40 @@ const setupRoutes = (app, client, tableNames) => {
         }
     });
 
+    // Save reviewer name (username)
+    app.post('/save-reviewer-name', async (req, res) => {
+        try {
+            const { name } = req.body;
+            
+            if (!name) {
+                return res.status(400).json({ error: 'Name is required' });
+            }
+
+            // Store the name in a session or environment variable
+            // This will be used when creating new annotations
+            process.env.CURRENT_REVIEWER = name;
+            
+            res.json({ name });
+        } catch (err) {
+            console.error('Error saving reviewer name:', err);
+            res.status(500).json({ error: 'Server error', details: err.message });
+        }
+    });
+
+    // Get reviewer name
+    app.get('/get-reviewer-name', async (_, res) => {
+        try {
+            res.json({ name: process.env.CURRENT_REVIEWER || '' });
+        } catch (err) {
+            console.error('Error getting reviewer name:', err);
+            res.status(500).json({ error: 'Server error', details: err.message });
+        }
+    });
+
+    // Modify the existing /save endpoint to use the stored name
     app.post('/save', async (req, res) => {
-        const { username, video, status, frameRanges, time_spent } = req.body;
-        console.log('time_spent', time_spent);
+        const { video, status, frameRanges, time_spent } = req.body;
+        const username = process.env.CURRENT_REVIEWER || 'anonymous';
         
         // Add validation
         if (!status) {
@@ -248,12 +279,13 @@ const setupRoutes = (app, client, tableNames) => {
                     time_spent: time_spent
                 });
             } else {
-                // Insert new entry
-                const { rows } = await client.query(
-                    `INSERT INTO ${tableNames.annotations} (username, video_filename, created_at, status, time_spent)
-                         VALUES ($1, $2, CURRENT_TIMESTAMP, $3, $4) RETURNING id`,
-                    [username, video, status, time_spent]
-                );
+                // Create new entry
+                const insertQuery = `
+                    INSERT INTO ${tableNames.annotations} (username, video_filename, status, time_spent)
+                    VALUES ($1, $2, $3, $4)
+                    RETURNING id
+                `;
+                const { rows } = await client.query(insertQuery, [username, video, status, time_spent]);
                 annotationId = rows[0].id;
                 console.log('Created new entry:', {
                     id: annotationId,
