@@ -59,21 +59,36 @@
     <script>
         async function loadVideoProgress() {
             try {
-                const response = await fetch('/video-status'); // Fetch progress from the backend
+                const response = await fetch('/video-status');
                 if (!response.ok) {
                     throw new Error('Failed to fetch video progress');
                 }
 
                 const videos = await response.json();
-
                 const videoList = document.getElementById('video-list');
                 videoList.innerHTML = ''; // Clear existing content
 
-                videos.forEach(videoData => {
+                // Calculate counts
+                const totalVideos = videos.length;
+                const completedVideos = videos.filter(v => v.status === 'verified').length;
+                
+                // Update the h1 title with the count
+                const h1 = document.querySelector('h1');
+                h1.textContent = `Dataset Review Homepage (${completedVideos}/${totalVideos})`;
+
+                // Add numbered entries
+                videos.forEach((videoData, index) => {
                     const { video, status } = videoData;
 
                     const videoEntry = document.createElement('div');
                     videoEntry.className = 'video-entry';
+
+                    // Add number
+                    const numberSpan = document.createElement('span');
+                    numberSpan.textContent = `${index + 1}. `;
+                    numberSpan.style.marginRight = '10px';
+                    numberSpan.style.minWidth = '30px';
+                    numberSpan.style.display = 'inline-block';
 
                     const videoName = document.createElement('a');
                     videoName.textContent = video;
@@ -82,11 +97,12 @@
                     const statusSpan = document.createElement('span');
                     statusSpan.className = `${status}-text`;
                     statusSpan.textContent = status.toUpperCase();
-                    statusSpan.style.marginLeft = '10px'; // Increased margin for better alignment
-                    statusSpan.style.display = 'inline-block'; // Makes alignment more consistent
-                    statusSpan.style.width = '100px'; // Fixed width for alignment
-                    statusSpan.style.textAlign = 'left'; // Left align the text
+                    statusSpan.style.marginLeft = '10px';
+                    statusSpan.style.display = 'inline-block';
+                    statusSpan.style.width = '100px';
+                    statusSpan.style.textAlign = 'left';
 
+                    videoEntry.appendChild(numberSpan);
                     videoEntry.appendChild(statusSpan);
                     videoEntry.appendChild(videoName);
                     videoList.appendChild(videoEntry);
