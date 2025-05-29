@@ -256,7 +256,8 @@ async function markForReview() {
         const annotationData = {
             username: 'anonymous', // Since username input is commented out
             video: currentVideo,
-            status: 'revisit'
+            status: 'revisit',
+            frameRanges: frameRanges // Add the frame ranges to the data being sent
         };
 
         try {

@@ -29,7 +29,8 @@ const getTableNames = () => {
     const prefix = tableNameMap[env];
     return {
         annotations: `${prefix}annotations`,
-        subtasks: `${prefix}subtasks`
+        subtasks: `${prefix}subtasks`,
+        frame_ranges: `${prefix}frame_ranges`
     };
 };
 
@@ -51,6 +52,12 @@ const createTables = async (client, tableNames) => {
                 time_spent INT NOT NULL,
                 annotation_id INT REFERENCES ${tableNames.annotations}(id)
             );
+            CREATE TABLE IF NOT EXISTS ${tableNames.frame_ranges} (
+                id SERIAL PRIMARY KEY,
+                start_frame INT NOT NULL,
+                end_frame INT NOT NULL,
+                annotation_id INT REFERENCES ${tableNames.annotations}(id)
+            );
         `);
         console.log('Tables created successfully');
     } catch (err) {
@@ -62,6 +69,7 @@ const createTables = async (client, tableNames) => {
 const dropTables = async (client, tableNames) => {
     try {
         await client.query(`
+            DROP TABLE IF EXISTS ${tableNames.frame_ranges};
             DROP TABLE IF EXISTS ${tableNames.subtasks};
             DROP TABLE IF EXISTS ${tableNames.annotations};
         `);
@@ -194,7 +202,7 @@ const setupRoutes = (app, client, tableNames) => {
     });
 
     app.post('/save', async (req, res) => {
-        const { username, video, status } = req.body;
+        const { username, video, status, frameRanges } = req.body;
         
         // Add validation
         if (!status) {
@@ -223,6 +231,13 @@ const setupRoutes = (app, client, tableNames) => {
                 `;
                 const { rows } = await client.query(updateQuery, [username, status, existingEntry.rows[0].id]);
                 annotationId = rows[0].id;
+
+                // Delete existing frame ranges for this annotation
+                await client.query(
+                    `DELETE FROM ${tableNames.frame_ranges} WHERE annotation_id = $1`,
+                    [annotationId]
+                );
+
                 console.log('Updated existing entry:', {
                     id: existingEntry.rows[0].id,
                     username: username,
@@ -243,6 +258,20 @@ const setupRoutes = (app, client, tableNames) => {
                     video: video,
                     status: status,
                 });
+            }
+
+            // Insert frame ranges if they exist
+            if (frameRanges && frameRanges.length > 0) {
+                const frameRangesValues = frameRanges.map(range => 
+                    `(${range.start}, ${range.end}, ${annotationId})`
+                ).join(',');
+                
+                await client.query(`
+                    INSERT INTO ${tableNames.frame_ranges} (start_frame, end_frame, annotation_id)
+                    VALUES ${frameRangesValues}
+                `);
+                
+                console.log('Saved frame ranges:', frameRanges);
             }
 
             await client.query('COMMIT');
@@ -277,7 +306,7 @@ const startServer = async () => {
         app.listen(PORT, () => {
             console.log(`Server running at http://localhost:${PORT}`);
             console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-            console.log(`Using tables: ${tableNames.annotations}, ${tableNames.subtasks}`);
+            console.log(`Using tables: ${tableNames.annotations}, ${tableNames.subtasks}, ${tableNames.frame_ranges}`);
         });
     } catch (err) {
         console.error('Failed to start server:', err);
