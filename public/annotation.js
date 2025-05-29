@@ -2,6 +2,8 @@ let videoIndex = 0;
 let videos = [];
 let annotations = [];
 let startTime = 0; // Track time spent on each video
+let isFastSpeed = true; // Track current speed state
+let isPlaying = true; // Track play/pause state
 
 // Load the video based on the query parameter from the URL
 function loadVideoFromURL() {
@@ -14,8 +16,16 @@ function loadVideoFromURL() {
         // For local development, check if video exists in root directory first
         // videoPlayer.src = `https://storage.googleapis.com/robot_traj_videos/all/${videoFilename}`; // Google Cloud Storage path
         videoPlayer.load();
-        videoPlayer.playbackRate = 2.0; // Set playback speed to 2x
+        videoPlayer.playbackRate = isFastSpeed ? 2.0 : 0.25; // Set playback speed based on current state
         resetTimer(); // Reset the timer for tracking how long the user spends on this video
+        
+        // Set initial play/pause state
+        isPlaying = true;
+        updatePlayPauseButton();
+        
+        // Update speed button text
+        const speedButton = document.querySelector('button[onclick="togglePlaybackSpeed()"]');
+        speedButton.textContent = `${isFastSpeed ? 'Slo-Mo' : 'Normal Speed'}`;
     } else {
         document.getElementById('feedback').textContent = 'No video selected.';
     }
@@ -359,4 +369,35 @@ window.onload = async function() {
     await getVideoList();
     loadVideoFromURL();
     loadUsername();
+}
+
+// Function to toggle playback speed
+function togglePlaybackSpeed() {
+    const videoPlayer = document.getElementById('videoPlayer');
+    isFastSpeed = !isFastSpeed;
+    videoPlayer.playbackRate = isFastSpeed ? 2.0 : 0.25;
+    
+    // Update button text
+    const button = document.querySelector('button[onclick="togglePlaybackSpeed()"]');
+    button.textContent = `${isFastSpeed ? 'Slo-Mo' : 'Normal Speed'}`;
+}
+
+// Function to toggle play/pause
+function togglePlayPause() {
+    const videoPlayer = document.getElementById('videoPlayer');
+    isPlaying = !isPlaying;
+    
+    if (isPlaying) {
+        videoPlayer.play();
+    } else {
+        videoPlayer.pause();
+    }
+    
+    updatePlayPauseButton();
+}
+
+// Function to update play/pause button text
+function updatePlayPauseButton() {
+    const button = document.getElementById('playPauseButton');
+    button.textContent = isPlaying ? 'Pause' : 'Play';
 }
