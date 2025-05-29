@@ -25,7 +25,7 @@
             margin-right: 20px;
             display: flex;
             flex-direction: column;
-            height: calc(100vh - 40px); /* Account for body padding */
+            height: calc(100vh - 40vh); /* Account for body padding */
         }
 
         /* Video container */
@@ -34,7 +34,7 @@
         }
 
         #video-container video {
-            max-height: calc(100vh - 30vh);
+            height: calc(100vh - 40vh);
             width: auto;
         }
 
@@ -223,11 +223,13 @@
         <div id="user-progress"></div>
 
         <div id="video-container">
-            <video id="videoPlayer" controls autoplay loop controlsList="nodownload nocaptions" disablePictureInPicture playsinline>
+            <video id="videoPlayer" controls loop controlsList="nodownload nocaptions" disablePictureInPicture playsinline> <!-- autoplay -->
                 Your browser does not support the video tag.
             </video>
-            <!-- <div id="frame-number" style="color: gray; font-size: 0.9em; margin-top: 5px;">Frame: 0</div> -->
-            <div id="video-status" class="status-text"></div>
+            <div style="display: flex; justify-content: left; align-items: center; margin: 2px 1px;">
+                <div id="video-status" class="status-text"></div>
+                <div id="frame-number" style="color: gray; font-size: 0.9em; margin-left: 10px;">Frame: 0</div>
+            </div>
         </div>
 
         
