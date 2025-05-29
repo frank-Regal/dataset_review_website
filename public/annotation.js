@@ -11,6 +11,7 @@ let loadDelay = 250; // 250ms delay before proceeding
 let isRecordingRange = false;
 let frameRangeStart = null;
 let frameRanges = [];
+let totalTimeSpent = 0;
 
 // Function to get current frame number
 function getCurrentFrame() {
@@ -168,11 +169,14 @@ async function nextVideo() {
     if (currentIndex !== -1 && currentIndex < videos.length - 1) {
         const nextVideoFilename = videos[currentIndex + 1];
 
+        const time_spent = getElapsedTime();
+
         // Post entry to database for current video
         const annotationData = {
-            username: 'anonymous', // Since username input is commented out
+            username: 'anonymous',
             video: currentVideo,
-            status: 'verified'
+            status: 'verified',
+            time_spent: time_spent
         };
 
         try {
@@ -284,12 +288,16 @@ async function markForReview() {
     if (currentIndex !== -1 && currentIndex < videos.length - 1) {
         const nextVideoFilename = videos[currentIndex + 1];
 
+        const time_spent = getElapsedTime();
+        console.log('time_spent', time_spent);
+
         // Post entry to database for current video
         const annotationData = {
-            username: 'anonymous', // Since username input is commented out
+            username: 'anonymous',
             video: currentVideo,
             status: 'revisit',
-            frameRanges: frameRanges // Add the frame ranges to the data being sent
+            frameRanges: frameRanges,
+            time_spent: time_spent
         };
 
         try {
@@ -339,13 +347,16 @@ async function markForReview() {
 
 // Function to reset and start the timer
 function resetTimer() {
-    startTime = Date.now(); // Reset the start time to the current time
+    startTime = Date.now();
+    totalTimeSpent = 0;
 }
 
 // Function to calculate the time spent on each video in seconds
 function getElapsedTime() {
     const currentTime = Date.now();
-    return Math.floor((currentTime - startTime) / 1000); // Calculate elapsed time in seconds
+    const elapsed = currentTime - startTime;
+    totalTimeSpent += elapsed;
+    return elapsed;
 }
 
 function addSubtask() {
@@ -450,7 +461,8 @@ function saveAnnotation() {
     const annotationData = {
         username: username,
         video: videoFilename,
-        status: 'correct' // Set status to 'correct' for normal annotations
+        status: 'correct',
+        time_spent: totalTimeSpent
     };
 
     // Send the annotation data to the backend for saving

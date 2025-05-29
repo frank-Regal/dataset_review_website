@@ -42,7 +42,8 @@ const createTables = async (client, tableNames) => {
                 username VARCHAR(255) NOT NULL,
                 video_filename VARCHAR(255) NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                status VARCHAR(255) NOT NULL
+                status VARCHAR(255) NOT NULL,
+                time_spent INT NOT NULL DEFAULT 0
             );
             CREATE TABLE IF NOT EXISTS ${tableNames.subtasks} (
                 id SERIAL PRIMARY KEY,
@@ -202,7 +203,8 @@ const setupRoutes = (app, client, tableNames) => {
     });
 
     app.post('/save', async (req, res) => {
-        const { username, video, status, frameRanges } = req.body;
+        const { username, video, status, frameRanges, time_spent } = req.body;
+        console.log('time_spent', time_spent);
         
         // Add validation
         if (!status) {
@@ -225,11 +227,11 @@ const setupRoutes = (app, client, tableNames) => {
                 // Update existing entry
                 const updateQuery = `
                     UPDATE ${tableNames.annotations} 
-                    SET username = $1, status = $2, created_at = CURRENT_TIMESTAMP
-                    WHERE id = $3
+                    SET username = $1, status = $2, created_at = CURRENT_TIMESTAMP, time_spent = $3
+                    WHERE id = $4
                     RETURNING id
                 `;
-                const { rows } = await client.query(updateQuery, [username, status, existingEntry.rows[0].id]);
+                const { rows } = await client.query(updateQuery, [username, status, time_spent, existingEntry.rows[0].id]);
                 annotationId = rows[0].id;
 
                 // Delete existing frame ranges for this annotation
@@ -243,13 +245,14 @@ const setupRoutes = (app, client, tableNames) => {
                     username: username,
                     video: video,
                     status: status,
+                    time_spent: time_spent
                 });
             } else {
                 // Insert new entry
                 const { rows } = await client.query(
-                    `INSERT INTO ${tableNames.annotations} (username, video_filename, created_at, status)
-                         VALUES ($1, $2, CURRENT_TIMESTAMP, $3) RETURNING id`,
-                    [username, video, status]
+                    `INSERT INTO ${tableNames.annotations} (username, video_filename, created_at, status, time_spent)
+                         VALUES ($1, $2, CURRENT_TIMESTAMP, $3, $4) RETURNING id`,
+                    [username, video, status, time_spent]
                 );
                 annotationId = rows[0].id;
                 console.log('Created new entry:', {
@@ -257,6 +260,7 @@ const setupRoutes = (app, client, tableNames) => {
                     username: username,
                     video: video,
                     status: status,
+                    time_spent: time_spent
                 });
             }
 
