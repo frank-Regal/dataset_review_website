@@ -54,7 +54,7 @@ async function nextVideo() {
         const annotationData = {
             username: 'anonymous', // Since username input is commented out
             video: currentVideo,
-            status: 'correct'
+            status: 'verified'
         };
 
         try {
@@ -67,7 +67,8 @@ async function nextVideo() {
             });
         } catch (error) {
             console.error('Error saving annotation:', error);
-        }
+        } 
+
         // Clear current annotations
         annotations = [];
         document.getElementById('annotations').innerHTML = '';
@@ -153,7 +154,7 @@ async function markForReview() {
         const annotationData = {
             username: 'anonymous', // Since username input is commented out
             video: currentVideo,
-            status: 'review'
+            status: 'revist'
         };
 
         try {
@@ -303,7 +304,7 @@ function saveAnnotation() {
     const annotationData = {
         username: username,
         video: videoFilename,
-        annotations: annotations // List of subtasks (with timeSpent)
+        status: 'correct' // Set status to 'correct' for normal annotations
     };
 
     // Send the annotation data to the backend for saving

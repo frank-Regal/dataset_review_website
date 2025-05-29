@@ -17,7 +17,7 @@
             display: flex;
             align-items: center;
         }
-        .progress-bar {
+        /* .progress-bar {
             width: 200px;
             height: 20px;
             background-color: #ddd;
@@ -27,14 +27,26 @@
         .progress {
             height: 100%;
             background-color: green;
-        }
+        } */
         .gray-out {
             color: gray;
             pointer-events: none; /* Makes it unclickable */
         }
-        .progress-text {
+        .status-text {
             margin-left: 10px;
             font-weight: bold;
+        }
+        .todo-text {
+            font-weight: bold;
+            color: #4568bf;
+        }
+        .verified-text {
+            font-weight: bold;
+            color: green;
+        }
+        .revist-text {
+            font-weight: bold;
+            color: orange;
         }
     </style>
 </head>
@@ -47,20 +59,18 @@
     <script>
         async function loadVideoProgress() {
             try {
-                const response = await fetch('/video-progress'); // Fetch progress from the backend
+                const response = await fetch('/video-status'); // Fetch progress from the backend
                 if (!response.ok) {
                     throw new Error('Failed to fetch video progress');
                 }
 
                 const videos = await response.json();
-                console.log('Fetched video progress:', videos); // Debugging: log fetched data
 
                 const videoList = document.getElementById('video-list');
                 videoList.innerHTML = ''; // Clear existing content
 
                 videos.forEach(videoData => {
-                    const { video, annotationCount, maxAnnotations } = videoData;
-                    const progressPercentage = (annotationCount / maxAnnotations) * 100;
+                    const { video, status } = videoData;
 
                     const videoEntry = document.createElement('div');
                     videoEntry.className = 'video-entry';
@@ -69,25 +79,16 @@
                     videoName.textContent = video;
                     videoName.href = `/annotate.html?video=${video}`;
 
-                    if (annotationCount >= maxAnnotations) {
-                        videoName.classList.add('gray-out');
-                    }
+                    const statusSpan = document.createElement('span');
+                    statusSpan.className = `${status}-text`;
+                    statusSpan.textContent = status.toUpperCase();
+                    statusSpan.style.marginLeft = '10px'; // Increased margin for better alignment
+                    statusSpan.style.display = 'inline-block'; // Makes alignment more consistent
+                    statusSpan.style.width = '100px'; // Fixed width for alignment
+                    statusSpan.style.textAlign = 'left'; // Left align the text
 
-                    const progressBar = document.createElement('div');
-                    progressBar.className = 'progress-bar';
-                    const progress = document.createElement('div');
-                    progress.className = 'progress';
-                    progress.style.width = `${progressPercentage}%`;
-
-                    progressBar.appendChild(progress);
-
-                    const progressText = document.createElement('span');
-                    progressText.className = 'progress-text';
-                    progressText.textContent = `${annotationCount}/${maxAnnotations} annotation(s) completed`;
-
+                    videoEntry.appendChild(statusSpan);
                     videoEntry.appendChild(videoName);
-                    videoEntry.appendChild(progressBar);
-                    videoEntry.appendChild(progressText);
                     videoList.appendChild(videoEntry);
                 });
             } catch (error) {

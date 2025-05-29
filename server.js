@@ -126,6 +126,38 @@ const setupRoutes = (app, client, tableNames) => {
         }
     });
 
+    app.get('/video-status', async (_, res) => {
+        try {
+            const videos = loadVideos();
+
+            // Query db for annotation counts
+            const annotationCountsQuery = `
+                SELECT a.video_filename, a.status
+                FROM ${tableNames.annotations} a
+            `
+
+            const subtaskCounts = await client.query(annotationCountsQuery);
+
+            // Create a map of video filenames to their subtask counts
+            const subtaskCountMap = new Map(
+                subtaskCounts.rows.map(row => [row.video_filename, row.status])
+            );
+
+            const videoProgress = videos.map(video => {
+                const video_status = subtaskCountMap.get(video) || 'todo';
+                return {
+                    video,
+                    status: video_status
+                };
+            });
+
+            res.json(videoProgress);
+        } catch (err) {
+            console.error('Error fetching video progress:', err);
+            res.status(500).json({ error: 'Server error', details: err.message });
+        }
+    });
+
     app.get('/video-progress', async (_, res) => {
         try {
             const videos = loadVideos();
