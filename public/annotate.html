@@ -17,15 +17,18 @@
             padding: 20px;
             display: flex;
             flex-direction: row;
+            overflow: auto;
+            padding-top: 40px;
         }
 
         /* Left column: Video and annotation form */
         #main-container {
-            flex: 2;
-            margin-right: 20px;
             display: flex;
-            flex-direction: column;
-            height: calc(100vh - 40vh); /* Account for body padding */
+            flex-direction: row;
+            width: 100%;
+            height: 100%;
+            margin-top: 20px;
+     
         }
 
         /* Video container */
@@ -208,67 +211,100 @@
         #frame-ranges-list li button:hover {
             background-color: #ff5252;
         }
+
+        #left-container {
+            flex: 2;
+            margin-right: 20px;
+            overflow-y: auto;
+            max-width: 30%;
+            min-width: 500px;
+        }
+
+        #right-container {
+            flex: 1;
+            margin-top: 75px;
+            min-width: 400px;
+            max-width: 30%;
+            overflow-y: auto;
+            background-color: #f5f5f5;  /* Light gray background */
+            padding: 15px;
+            border-radius: 8px;
+            margin-left: 0;  /* Remove any margin */
+            box-shadow: outset 0 0 10px rgba(0, 0, 0, 0.1);  /* Subtle inner shadow */
+        }
+
+        h1 {
+            margin-left: 10px;
+            margin-top: 3px;
+            margin-bottom: 20px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: clip;  /* Adjust this value based on your needs */
+        }
+
     </style>
 </head>
 <body>
-    <div id="main-container">
-        <div style="display: flex; justify-content: left; align-items: center; margin: 2px 1px;">
-            <button onclick="window.location.href = '/';" class="gray-button" style="margin-right: 10px;">Back</button>
-            <h1 style="margin-left: 10px; margin-top: 3px; margin-bottom: 0px;">Dataset Review</h1>
-        </div>
-        
-        <div id="subtask-placeholder" style="color: gray; font-style: italic; padding-top: 10px; padding-bottom: 10px;">
-            <span id="video-name"></span>
-        </div>
-        
-        <div id="user-progress"></div>
-
-        <div id="video-container">
-            <video id="videoPlayer" controls loop controlsList="nodownload nocaptions nofullscreen" disablePictureInPicture playsinline>
-                Your browser does not support the video tag.
-            </video>
+    <div id="main-container" style="display: flex; align-items: flex-start; margin: 2px 1px;">
+        <div id="left-container">
             <div style="display: flex; justify-content: left; align-items: center; margin: 2px 1px;">
-                <div id="video-status" class="status-text"></div>
-                <div id="frame-number" style="color: gray; font-size: 0.9em; margin-left: 10px;">Frame: 0</div>
+                <button onclick="window.location.href = '/';" class="gray-button" style="margin-right: 10px;">Back</button>
+                <h1 style="margin-left: 10px; margin-top: 3px; margin-bottom: 0px;">Dataset Review</h1>
             </div>
+            
+            <div id="subtask-placeholder" style="color: gray; font-size: 0.8em; font-style: italic; padding-top: 10px; padding-bottom: 10px;">
+                <span id="video-name"></span>
+            </div>
+            
+            <div id="user-progress"></div>
+
+            <div id="video-container">
+                <video id="videoPlayer" controls loop controlsList="nodownload nocaptions nofullscreen" disablePictureInPicture playsinline>
+                    Your browser does not support the video tag.
+                </video>
+                <div style="display: flex; justify-content: left; align-items: center; margin: 2px 1px;">
+                    <div id="video-status" class="status-text"></div>
+                    <div id="frame-number" style="color: gray; font-size: 0.9em; margin-left: 10px;">Frame: 0</div>
+                </div>
+            </div>
+
+            <!-- Display the current list of subtasks -->
+            <div id="video-controls">
+                <button onclick="togglePlaybackSpeed()" class="gray-button" id="speedButton" title="Toggle Playback Speed (↑/↓)">Normal</button>
+                <button onclick="togglePlayPause()" class="gray-button" id="playPauseButton" title="Play/Pause Video (Space Bar)">Pause</button>
+                <button onclick="toggleFrameRange()" class="gray-button" id="frameRangeButton" title="Record Frame Range (s)">Mark Frames</button>
+            </div>
+
+            <div class="controls-container">
+                <button onclick="previousVideo()" class="blue-button" title="Navigate to Previous Video (←)">Previous Video</button>
+                <button onclick="markForReview()" class="yellow-button" title="Mark for Review (w)">Mark for Review</button>
+                <button onclick="nextVideo()" class="green-button" title="Mark as Verified and Navigate to Next Video (→)">Verify</button>
+            </div>
+
+            <div id="annotation-list">
+                <div id="subtask-placeholder" style="color: gray; font-style: italic;"></div>
+                <ul id="annotations"></ul>
+            </div>
+
+            <!-- <div id="feedback"></div> -->
         </div>
 
-        
-
-        <!-- Display the current list of subtasks -->
-        <div id="video-controls">
-            <button onclick="togglePlaybackSpeed()" class="gray-button" id="speedButton" title="Toggle Playback Speed (↑/↓)">Normal</button>
-            <button onclick="togglePlayPause()" class="gray-button" id="playPauseButton" title="Play/Pause Video (Space Bar)">Pause</button>
-            <button onclick="toggleFrameRange()" class="gray-button" id="frameRangeButton" title="Record Frame Range (s)">Mark Frames</button>
+        <div id="right-container">      
+            <h4>Frames Marked for Review</h4>
+            <ul id="frame-ranges-list" style="list-style-type: none; padding-left: 0;"></ul>
         </div>
-
-        <div class="controls-container">
-            <button onclick="previousVideo()" class="blue-button" title="Navigate to Previous Video (←)">Previous Video</button>
-            <button onclick="markForReview()" class="yellow-button" title="Mark for Review (w)">Mark for Review</button>
-            <button onclick="nextVideo()" class="green-button" title="Mark as Verified and Navigate to Next Video (→)">Verify</button>
-
-        </div>
-
-        <div id="annotation-list">
-            <div id="subtask-placeholder" style="color: gray; font-style: italic;"></div>
-            <ul id="annotations"></ul>
-        </div>
-
-        <div id="feedback"></div>
     </div>
 
     <!-- Add this after the video container -->
-    <div id="frame-ranges-container" style="margin-top: calc(100vh - 50%); padding-right: calc(100vw - 50%);">
+    <!-- <div id="frame-ranges-container" style="margin-top: calc(100vh - 50%); padding-right: calc(100vw - 50%);">
         <h4>Frames to Revisit:</h4>
         <ul id="frame-ranges-list" style="list-style-type: none; padding-left: 0;"></ul>
-    </div>
+    </div> -->
 
-    <!-- Right column: Instructions
-    <div id="instructions-container">
-        <h2>Instructions</h2>
-        <p>
-            This is a video annotation tool.
-        </p>
+    <!-- Right column: Instructions -->
+    <!-- <div id="instructions-container">
+        <h4>Frames to Revisit:</h4>
+        <ul id="frame-ranges-list" style="list-style-type: none; padding-left: 0;"></ul>
     </div> -->
 
     <script src="annotation.js"></script>
