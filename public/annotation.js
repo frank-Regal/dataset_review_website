@@ -547,10 +547,22 @@ function updatePlayPauseButton() {
     button.textContent = isPlaying ? 'Pause' : 'Play';
 }
 
-// Add keyboard event listeners for hotkeys
+// Add this new function to handle video skimming
+function skimVideo(direction) {
+    const videoPlayer = document.getElementById('videoPlayer');
+    const skipAmount = 0.05; // Number of seconds to skip
+    
+    if (direction === 'forward') {
+        videoPlayer.currentTime = Math.min(videoPlayer.duration, videoPlayer.currentTime + skipAmount);
+    } else {
+        videoPlayer.currentTime = Math.max(0, videoPlayer.currentTime - skipAmount);
+    }
+}
+
+// Modify the keyboard event listener to include skimming
 document.addEventListener('keydown', function(event) {
     // Prevent default behavior for these keys
-    if (['ArrowLeft', 'ArrowRight', 'Space', 'KeyS', 'KeyP'].includes(event.code)) {
+    if (['ArrowLeft', 'ArrowRight', 'Space', 'KeyS', 'KeyP', 'KeyA', 'KeyD'].includes(event.code)) {
         event.preventDefault();
     }
 
@@ -570,13 +582,18 @@ document.addEventListener('keydown', function(event) {
         case 'ArrowDown':
             togglePlaybackSpeed();
             break;
-        case 'Enter':
+        case 'KeyW':
             markForReview();
             break;
-        // case 'KeyR':
-        //     event.preventDefault();
-        //     toggleFrameRange();
-        //     break;
+        case 'KeyS': // S key for skip
+            toggleFrameRange();
+            break;
+        case 'KeyA': // A key for backward skim
+            skimVideo('backward');
+            break;
+        case 'KeyD': // D key for forward skim
+            skimVideo('forward');
+            break;
     }
 });
 
