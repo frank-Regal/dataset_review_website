@@ -290,6 +290,28 @@ const setupRoutes = (app, client, tableNames) => {
             res.status(500).json({ error: `Database error: ${err.message}` });
         }
     });
+
+    // Add this new endpoint to fetch frame ranges for a specific video
+    app.get('/frame-ranges/:video', async (req, res) => {
+        try {
+            const { video } = req.params;
+            
+            const query = `
+                SELECT fr.start_frame, fr.end_frame
+                FROM ${tableNames.frame_ranges} fr
+                JOIN ${tableNames.annotations} a ON fr.annotation_id = a.id
+                WHERE a.video_filename = $1
+                ORDER BY fr.start_frame ASC
+            `;
+            
+            const result = await client.query(query, [video]);
+            
+            res.json(result.rows);
+        } catch (err) {
+            console.error('Error fetching frame ranges:', err);
+            res.status(500).json({ error: 'Server error', details: err.message });
+        }
+    });
 };
 
 

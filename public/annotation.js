@@ -74,19 +74,40 @@ async function updateVideoStatus() {
     }
 }
 
-// Load the video based on the query parameter from the URL
-function loadVideoFromURL() {
+// Add this new function to fetch frame ranges from the server
+async function loadFrameRanges(videoName) {
+    console.log('Loading frame ranges for video:', videoName);
+    try {
+        const response = await fetch(`/frame-ranges/${videoName}`);
+        const ranges = await response.json();
+
+        // Convert the database format to our local format
+        frameRanges = ranges.map(range => ({
+            start: range.start_frame,
+            end: range.end_frame
+        }));
+
+        
+        // Update the display
+        updateFrameRangesDisplay();
+    } catch (error) {
+        console.error('Error loading frame ranges:', error);
+    }
+}
+
+// Modify the loadVideoFromURL function to load frame ranges
+async function loadVideoFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     const videoFilename = urlParams.get('video');
 
+    console.log('Loading video:', videoFilename);
+
     if (videoFilename) {
         const videoPlayer = document.getElementById('videoPlayer');
-        videoPlayer.src = `/videos/${videoFilename}`; // Local path
-        // For local development, check if video exists in root directory first
-        // videoPlayer.src = `https://storage.googleapis.com/robot_traj_videos/all/${videoFilename}`; // Google Cloud Storage path
+        videoPlayer.src = `/videos/${videoFilename}`;
         videoPlayer.load();
-        videoPlayer.playbackRate = isFastSpeed ? normalSpeed : sloMoSpeed; // Set playback speed based on current state
-        resetTimer(); // Reset the timer for tracking how long the user spends on this video
+        videoPlayer.playbackRate = isFastSpeed ? normalSpeed : sloMoSpeed;
+        resetTimer();
         
         // Set initial play/pause state
         isPlaying = true;
@@ -98,11 +119,15 @@ function loadVideoFromURL() {
 
         // Add timeupdate event listener to update frame number during playback
         videoPlayer.ontimeupdate = updateFrameNumber;
+        
+        // Load frame ranges for this video
+        await loadFrameRanges(videoFilename);
     } else {
         document.getElementById('feedback').textContent = 'No video selected.';
     }
+    
     updateVideoName();
-    updateVideoStatus(); // Add this line to update the status
+    await updateVideoStatus();
 }
 
 // function nextVideo() {
@@ -470,9 +495,18 @@ window.addEventListener('load', loadUsername);
 
 // Load the video and setup the page when it loads
 window.onload = async function() {
-    await getVideoList();
-    loadVideoFromURL();
-    loadUsername();
+    try {
+        // First get the video list
+        await getVideoList();
+        
+        // Then load the video and its frame ranges
+        loadVideoFromURL();
+        
+        // Load username if saved
+        loadUsername();
+    } catch (error) {
+        console.error('Error during initialization:', error);
+    }
 }
 
 // Function to toggle playback speed
