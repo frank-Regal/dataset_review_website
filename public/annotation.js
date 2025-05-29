@@ -16,7 +16,7 @@ function loadVideoFromURL() {
         // For local development, check if video exists in root directory first
         // videoPlayer.src = `https://storage.googleapis.com/robot_traj_videos/all/${videoFilename}`; // Google Cloud Storage path
         videoPlayer.load();
-        videoPlayer.playbackRate = isFastSpeed ? 2.0 : 0.25; // Set playback speed based on current state
+        videoPlayer.playbackRate = isFastSpeed ? 2.0 : 0.2; // Set playback speed based on current state
         resetTimer(); // Reset the timer for tracking how long the user spends on this video
         
         // Set initial play/pause state
@@ -25,7 +25,7 @@ function loadVideoFromURL() {
         
         // Update speed button text
         const speedButton = document.querySelector('button[onclick="togglePlaybackSpeed()"]');
-        speedButton.textContent = `${isFastSpeed ? 'Slo-Mo' : 'Normal Speed'}`;
+        speedButton.textContent = `${isFastSpeed ? 'Slo-Mo' : 'Normal'}`;
     } else {
         document.getElementById('feedback').textContent = 'No video selected.';
     }
@@ -375,11 +375,11 @@ window.onload = async function() {
 function togglePlaybackSpeed() {
     const videoPlayer = document.getElementById('videoPlayer');
     isFastSpeed = !isFastSpeed;
-    videoPlayer.playbackRate = isFastSpeed ? 2.0 : 0.25;
+    videoPlayer.playbackRate = isFastSpeed ? 2.0 : 0.2;
     
     // Update button text
     const button = document.querySelector('button[onclick="togglePlaybackSpeed()"]');
-    button.textContent = `${isFastSpeed ? 'Slo-Mo' : 'Normal Speed'}`;
+    button.textContent = `${isFastSpeed ? 'Slo-Mo' : 'Normal'}`;
 }
 
 // Function to toggle play/pause
@@ -401,3 +401,29 @@ function updatePlayPauseButton() {
     const button = document.getElementById('playPauseButton');
     button.textContent = isPlaying ? 'Pause' : 'Play';
 }
+
+// Add keyboard event listeners for hotkeys
+document.addEventListener('keydown', function(event) {
+    // Prevent default behavior for these keys
+    if (['ArrowLeft', 'ArrowRight', 'Space', 'KeyS', 'KeyP'].includes(event.code)) {
+        event.preventDefault();
+    }
+
+    switch(event.code) {
+        case 'ArrowLeft':
+            previousVideo();
+            break;
+        case 'ArrowRight':
+            nextVideo();
+            break;
+        case 'Space':
+            togglePlayPause();
+            break;
+        case 'ArrowUp':
+            togglePlaybackSpeed();
+            break;
+        case 'Enter':
+            markForReview();
+            break;
+    }
+});
