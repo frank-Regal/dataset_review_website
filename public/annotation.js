@@ -517,6 +517,9 @@ document.addEventListener('keydown', function(event) {
         case 'ArrowUp':
             togglePlaybackSpeed();
             break;
+        case 'ArrowDown':
+            togglePlaybackSpeed();
+            break;
         case 'Enter':
             markForReview();
             break;
