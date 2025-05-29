@@ -10,9 +10,11 @@ function loadVideoFromURL() {
 
     if (videoFilename) {
         const videoPlayer = document.getElementById('videoPlayer');
-        // videoPlayer.src = `/videos/${videoFilename}`; // Local path
-        videoPlayer.src = `https://storage.googleapis.com/robot_traj_videos/all/${videoFilename}`;
+        videoPlayer.src = `/videos/${videoFilename}`; // Local path
+        // For local development, check if video exists in root directory first
+        // videoPlayer.src = `https://storage.googleapis.com/robot_traj_videos/all/${videoFilename}`; // Google Cloud Storage path
         videoPlayer.load();
+        videoPlayer.playbackRate = 2.0; // Set playback speed to 2x
         resetTimer(); // Reset the timer for tracking how long the user spends on this video
     } else {
         document.getElementById('feedback').textContent = 'No video selected.';
