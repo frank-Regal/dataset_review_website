@@ -158,6 +158,14 @@ async function nextVideo() {
         await getVideoList();
     }
     
+    // Pause the video if it's playing
+    if (isPlaying) {
+        isPlaying = false;
+        const videoPlayer = document.getElementById('videoPlayer');
+        videoPlayer.pause();
+        updatePlayPauseButton();
+    }
+    
     // Get current video from URL
     const urlParams = new URLSearchParams(window.location.search);
     const currentVideo = urlParams.get('video');
@@ -313,6 +321,14 @@ async function markForReview() {
     // If we haven't loaded the video list yet, load it
     if (videos.length === 0) {
         await getVideoList();
+    }
+    
+    // Pause the video if it's playing
+    if (isPlaying) {
+        isPlaying = false;
+        const videoPlayer = document.getElementById('videoPlayer');
+        videoPlayer.pause();
+        updatePlayPauseButton();
     }
     
     // Get current video from URL
@@ -601,6 +617,13 @@ function updatePlayPauseButton() {
 function skimVideo(direction) {
     const videoPlayer = document.getElementById('videoPlayer');
     const frameTime = 1 / frameRate; // Time per frame based on frameRate
+    
+    // Pause the video if it's playing
+    if (isPlaying) {
+        isPlaying = false;
+        videoPlayer.pause();
+        updatePlayPauseButton();
+    }
     
     if (direction === 'forward') {
         videoPlayer.currentTime = Math.min(videoPlayer.duration, videoPlayer.currentTime + frameTime);
