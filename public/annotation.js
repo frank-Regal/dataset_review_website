@@ -119,7 +119,7 @@ async function loadVideoFromURL() {
         const videoPlayer = document.getElementById('videoPlayer');
         videoPlayer.src = `/videos/${videoFilename}`;
         videoPlayer.load();
-        videoPlayer.playbackRate = isFastSpeed ? normalSpeed : sloMoSpeed;
+        videoPlayer.playbackRate = isFastSpeed ? sloMoSpeed : normalSpeed;
         resetTimer();
         
         // Set initial play/pause state
@@ -128,7 +128,7 @@ async function loadVideoFromURL() {
         
         // Update speed button text
         const speedButton = document.querySelector('button[onclick="togglePlaybackSpeed()"]');
-        speedButton.textContent = `${isFastSpeed ? 'Slo-Mo' : 'Normal'}`;
+        speedButton.textContent = `${isFastSpeed ? 'Fast (↑)' : 'Slo-Mo (↓)'}`;
 
         // Add timeupdate event listener to update frame number during playback
         videoPlayer.ontimeupdate = updateFrameNumber;
@@ -598,11 +598,11 @@ window.onload = async function() {
 function togglePlaybackSpeed() {
     const videoPlayer = document.getElementById('videoPlayer');
     isFastSpeed = !isFastSpeed;
-    videoPlayer.playbackRate = isFastSpeed ? normalSpeed : sloMoSpeed;
+    videoPlayer.playbackRate = isFastSpeed ? sloMoSpeed : normalSpeed;
     
     // Update button text
     const button = document.querySelector('button[onclick="togglePlaybackSpeed()"]');
-    button.textContent = `${isFastSpeed ? 'Slo-Mo' : 'Normal'}`;
+    button.textContent = `${isFastSpeed ? 'Fast (↑)' : 'Slo-Mo (↓)'}`;
 }
 
 // Function to toggle play/pause
@@ -622,7 +622,7 @@ function togglePlayPause() {
 // Function to update play/pause button text
 function updatePlayPauseButton() {
     const button = document.getElementById('playPauseButton');
-    button.textContent = isPlaying ? 'Pause' : 'Play';
+    button.textContent = isPlaying ? 'Pause (Space Bar)' : 'Play (Space Bar)';
 }
 
 // Add this new function to handle video skimming
@@ -740,7 +740,7 @@ function toggleFrameRange() {
             //     `Recorded frame range: ${frameRangeStart} - ${frameRangeEnd}`;
         }
         
-        button.textContent = 'Mark Frames';
+        button.textContent = 'Mark Frames (s)';
         button.style.backgroundColor = ''; // Reset to default gray
     }
 }

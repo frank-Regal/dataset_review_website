@@ -139,6 +139,20 @@
             text-align: left;
             font-weight: bold;
         }
+        .gray-button-small {
+            background-color: gray;
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            font-weight: bold;
+            width: 63px;
+        }  
+        .gray-button-small:hover {
+            background-color: darkgray;
+        }
     
         .gray-button:hover {
             background-color: darkgray;
@@ -270,16 +284,18 @@
 
             <!-- Display the current list of subtasks -->
             <div id="video-controls">
-                <button onclick="togglePlaybackSpeed()" class="gray-button" id="speedButton" title="Toggle Playback Speed (↑/↓)">Normal</button>
-                <button onclick="togglePlayPause()" class="gray-button" id="playPauseButton" title="Play/Pause Video (Space Bar)">Pause</button>
-                <button onclick="toggleFrameRange()" class="gray-button" id="frameRangeButton" title="Record Frame Range (s)">Mark Frames</button>
+                <button onclick="togglePlaybackSpeed()" class="gray-button" id="speedButton" title="Toggle Playback Speed (↑/↓)">Slo-Mo (↑/↓)</button>
+                <button onclick="togglePlayPause()" class="gray-button" id="playPauseButton" title="Play/Pause Video (Space Bar)">Pause (Space Bar)</button>
+                <button onclick="skimVideo('backward')" class="gray-button-small" title="Skip Left (a)">←</button>
+                <button onclick="skimVideo('forward')" class="gray-button-small" title="Skip Right (d)">→</button>
+                <button onclick="toggleFrameRange()" class="gray-button" id="frameRangeButton" title="Record Frame Range (s)">Mark Frames (s)</button>
             </div>
 
             <div class="controls-container">
-                <button onclick="previousVideo()" class="blue-button" title="Navigate to Previous Video (←)">Previous Video</button>
-                <button onclick="markForReview()" class="yellow-button" title="Mark for Review (w)">Mark for Review</button>
-                <button onclick="nextVideo()" class="green-button" title="Mark as Verified and Navigate to Next Video (→)">Verify</button>
-                <button onclick="skipVideo()" class="blue-button" title="Skip to Next Video (s)">Skip</button>
+                <button onclick="previousVideo()" class="blue-button" title="Navigate to Previous Video (←)">Previous Video (←)</button>
+                <button onclick="markForReview()" class="yellow-button" title="Mark for Review (w)">Mark for Review (w)</button>
+                <button onclick="nextVideo()" class="green-button" title="Mark as Verified and Navigate to Next Video (Enter)">Verify (Enter)</button>
+                <button onclick="skipVideo()" class="blue-button" title="Skip to Next Video (→)">Skip (→)</button>
             </div>
 
             <div id="annotation-list">
