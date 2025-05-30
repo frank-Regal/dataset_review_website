@@ -20,14 +20,10 @@ help:
 
 start:
 	@xhost +local:docker; \
-	export UID_GID=$$(id -u):$$(id -g); \
-	export UNAME=$$(whoami); \
 	docker compose up -d
 
 start-verbose:
 	@xhost +local:docker; \
-	export UID_GID=$$(id -u):$$(id -g); \
-	export UNAME=$$(whoami); \
 	docker compose up
 	
 stop:

@@ -87,25 +87,6 @@ ENV TERM=xterm-256color
 RUN echo "source /etc/bash_completion" >> /root/.bashrc && \
     echo 'PS1="\e[1m\e[93m\u\e[97m@\e[93m\h:\e[35m\w\e[0m\e[97m#\e[0m "' >> /root/.bashrc
 
-COPY scripts/run-backend.sh /usr/local/bin/run-backend
-COPY scripts/run-frontend.sh /usr/local/bin/run-frontend
-COPY scripts/run-ngrok-backend.sh /usr/local/bin/run-ngrok-backend
-COPY scripts/run-ngrok-frontend.sh /usr/local/bin/run-ngrok-frontend
-COPY scripts/kill-backend.sh /usr/local/bin/kill-backend
-COPY scripts/kill-frontend.sh /usr/local/bin/kill-frontend
-COPY scripts/kill-ngrok-backend.sh /usr/local/bin/kill-ngrok-backend
-COPY scripts/kill-ngrok-frontend.sh /usr/local/bin/kill-ngrok-frontend
-
-# Make the scripts executable
-RUN chmod +x /usr/local/bin/run-backend
-RUN chmod +x /usr/local/bin/run-frontend
-RUN chmod +x /usr/local/bin/run-ngrok-backend
-RUN chmod +x /usr/local/bin/run-ngrok-frontend
-RUN chmod +x /usr/local/bin/kill-backend
-RUN chmod +x /usr/local/bin/kill-frontend
-RUN chmod +x /usr/local/bin/kill-ngrok-backend
-RUN chmod +x /usr/local/bin/kill-ngrok-frontend
-
 # Set default shell to be login shell
 SHELL ["/bin/bash", "-l", "-c"] 
 

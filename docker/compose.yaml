@@ -19,15 +19,11 @@ services:
     
     # Environment configuration
     environment:
-      - DISPLAY=${DISPLAY}
       - NVIDIA_DRIVER_CAPABILITIES=all
       - NVIDIA_VISIBLE_DEVICES=all
       - CHOKIDAR_USEPOLLING=true  # Enable hot reloading in Docker
       - WATCHPACK_POLLING=true     # Enable webpack file watching
     
-    env_file:
-      - variables.env
-
     # Security configuration
     security_opt:
       - apparmor:unconfined

@@ -105,7 +105,7 @@ const loadVideos = () => {
         return cachedVideos;
     }
 
-    const videosFile = path.join(__dirname, 'public', 'videos', 'videos.json');
+    const videosFile = path.join(__dirname, 'public', 'videos', '_videos.json');
     if (!fs.existsSync(videosFile)) {
         throw new Error('Videos list not found.');
     }

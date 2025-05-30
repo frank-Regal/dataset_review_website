@@ -65,9 +65,5 @@ chown -R $uname:$uname /home/$uname
 # source /home/$uname/.bashrc
 source /root/.bashrc
 
-# Run these to have the frontend and backend run automatically when docker container starts
-run-frontend
-run-backend
-
 exec tail -f /dev/null
 # exec "$@"
