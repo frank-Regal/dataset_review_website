@@ -562,13 +562,16 @@ function updatePlayPauseButton() {
 // Add this new function to handle video skimming
 function skimVideo(direction) {
     const videoPlayer = document.getElementById('videoPlayer');
-    const skipAmount = 0.05; // Number of seconds to skip
+    const frameTime = 1 / frameRate; // Time per frame based on frameRate
     
     if (direction === 'forward') {
-        videoPlayer.currentTime = Math.min(videoPlayer.duration, videoPlayer.currentTime + skipAmount);
+        videoPlayer.currentTime = Math.min(videoPlayer.duration, videoPlayer.currentTime + frameTime);
     } else {
-        videoPlayer.currentTime = Math.max(0, videoPlayer.currentTime - skipAmount);
+        videoPlayer.currentTime = Math.max(0, videoPlayer.currentTime - frameTime);
     }
+    
+    // Update frame number display after skimming
+    updateFrameNumber();
 }
 
 // Modify the keyboard event listener to include skimming
@@ -579,10 +582,10 @@ document.addEventListener('keydown', function(event) {
     }
 
     switch(event.code) {
-        case 'ArrowLeft':
+        case 'Backspace':
             previousVideo();
             break;
-        case 'ArrowRight':
+        case 'Enter':
             nextVideo();
             break;
         case 'Space':
