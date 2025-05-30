@@ -158,6 +158,13 @@ async function nextVideo() {
         await getVideoList();
     }
     
+    // Check if there are any frame ranges
+    if (frameRanges.length > 0) {
+        // If there are frame ranges, call markForReview instead
+        await markForReview();
+        return;
+    }
+    
     // Pause the video if it's playing
     if (isPlaying) {
         isPlaying = false;
