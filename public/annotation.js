@@ -54,8 +54,9 @@ async function updateVideoStatus() {
     
     if (videoName) {
         try {
-            const response = await fetch('/video-status');
-            const videos = await response.json();
+            // Get video status
+            const statusResponse = await fetch('/video-status');
+            const videos = await statusResponse.json();
             
             const videoData = videos.find(v => v.video === videoName);
             const status = videoData ? videoData.status : 'todo';
@@ -64,10 +65,14 @@ async function updateVideoStatus() {
             const totalVideos = videos.length;
             const completedVideos = videos.filter(v => v.status === 'todo').length;
             
-            // Update the header with count
+            // Get title from videos endpoint
+            const videosResponse = await fetch('/videos');
+            const videosData = await videosResponse.json();
+            
+            // Update the header with title and count
             const header = document.querySelector('h1');
             if (header) {
-                header.textContent = `Dataset Review (${totalVideos - completedVideos}/${totalVideos})`;
+                header.textContent = `${videosData.title} (${totalVideos - completedVideos}/${totalVideos})`;
             }
             
             const statusElement = document.getElementById('video-status');

@@ -79,7 +79,7 @@
 </head>
 <body>
 
-    <h1>Dataset Review Homepage</h1>
+    <h1 id="homepage-title">Dataset Review Homepage</h1>
 
     <h3>Instructions</h3>
     <ol>
@@ -114,9 +114,13 @@
                 const totalVideos = videos.length;
                 const completedVideos = videos.filter(v => v.status === 'todo').length;
                 
-                // Update the h1 title with the count
+                // Get the title from the videos endpoint
+                const videosResponse = await fetch('/videos');
+                const videosData = await videosResponse.json();
+                
+                // Update the h1 title with the title from _videos.json and the count
                 const h1 = document.querySelector('h1');
-                h1.textContent = `Dataset Review Homepage (${totalVideos - completedVideos}/${totalVideos})`;
+                h1.textContent = `${videosData.title} (${totalVideos - completedVideos}/${totalVideos})`;
 
                 // Add numbered entries
                 videos.forEach((videoData, index) => {

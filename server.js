@@ -110,9 +110,12 @@ const loadVideos = () => {
         throw new Error('Videos list not found.');
     }
 
-    const videos = JSON.parse(fs.readFileSync(videosFile, 'utf8')).videos;
-    cachedVideos = videos;
-    return videos;
+    const data = JSON.parse(fs.readFileSync(videosFile, 'utf8'));
+    cachedVideos = {
+        videos: data.videos,
+        title: data.title
+    };
+    return cachedVideos;
 };
 
 // Routes
@@ -127,8 +130,8 @@ const setupRoutes = (app, client, tableNames) => {
 
     app.get('/videos', (_, res) => {
         try {
-            const videos = loadVideos();
-            res.json({ videos });
+            const data = loadVideos();
+            res.json(data);
         } catch (err) {
             console.error('Error fetching videos:', err);
             res.status(500).json({ error: 'Server error', details: err.message });
@@ -152,7 +155,7 @@ const setupRoutes = (app, client, tableNames) => {
                 subtaskCounts.rows.map(row => [row.video_filename, row.status])
             );
 
-            const videoProgress = videos.map(video => {
+            const videoProgress = videos.videos.map(video => {
                 const video_status = subtaskCountMap.get(video) || 'todo';
                 return {
                     video,
@@ -185,7 +188,7 @@ const setupRoutes = (app, client, tableNames) => {
                 subtaskCounts.rows.map(row => [row.video_filename, parseInt(row.count)])
             );
 
-            const videoProgress = videos.map(video => {
+            const videoProgress = videos.videos.map(video => {
                 const count = subtaskCountMap.get(video) || 0;
                 return {
                     video,
