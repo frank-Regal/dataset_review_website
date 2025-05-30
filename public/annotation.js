@@ -226,6 +226,44 @@ async function nextVideo() {
     }
 }
 
+async function skipVideo() {
+    // If we haven't loaded the video list yet, load it
+    if (videos.length === 0) {
+        await getVideoList();
+    }
+    
+    // Get current video from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentVideo = urlParams.get('video');
+    
+    // Find the index of the current video
+    const currentIndex = videos.indexOf(currentVideo);
+    
+    // If we found the current video and there's a next video
+    if (currentIndex !== -1 && currentIndex < videos.length - 1) {
+        const nextVideoFilename = videos[currentIndex + 1];
+        
+        // Clear current annotations
+        annotations = [];
+        document.getElementById('annotations').innerHTML = '';
+        document.getElementById('subtask-placeholder').style.display = 'block';
+        
+        // Clear frame ranges
+        frameRanges = [];
+        document.getElementById('frame-ranges-list').innerHTML = '';
+        
+        // Update URL and load next video
+        const newUrl = `${window.location.pathname}?video=${nextVideoFilename}`;
+        window.history.pushState({}, '', newUrl);
+        
+        loadVideoFromURL();
+        
+        // Clear feedback message
+        document.getElementById('feedback').textContent = '';
+    } else {
+        document.getElementById('feedback').textContent = 'This is the last video in the sequence.';
+    }
+}
 
 // Get video name from URL and display it
 function updateVideoName() {
@@ -590,6 +628,12 @@ document.addEventListener('keydown', function(event) {
             break;
         case 'Space':
             togglePlayPause();
+            break;
+        case 'ArrowLeft':
+            previousVideo();
+            break;
+        case 'ArrowRight':
+            skipVideo();
             break;
         case 'ArrowUp':
             togglePlaybackSpeed();

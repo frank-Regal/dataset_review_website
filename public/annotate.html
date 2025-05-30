@@ -35,7 +35,7 @@
         }
 
         #video-container video {
-            height: calc(100vh - 40vh);
+            height: calc(100vh - 30vh);
             width: auto;
         }
 
@@ -155,12 +155,13 @@
             color: black;
             padding: 8px;
             border-radius: 5px;
-            border: none;
+            border: 2px solid transparent;  /* Add this line to match green button */
             cursor: pointer;
             text-align: left;
             font-weight: bold;
+            transition: all 0.2s ease;  /* Add this line to match green button */
         }
-
+        
         .blue-button:hover {
             background-color: #4568bf;
         }
@@ -278,6 +279,7 @@
                 <button onclick="previousVideo()" class="blue-button" title="Navigate to Previous Video (←)">Previous Video</button>
                 <button onclick="markForReview()" class="yellow-button" title="Mark for Review (w)">Mark for Review</button>
                 <button onclick="nextVideo()" class="green-button" title="Mark as Verified and Navigate to Next Video (→)">Verify</button>
+                <button onclick="skipVideo()" class="blue-button" title="Skip to Next Video (s)">Skip</button>
             </div>
 
             <div id="annotation-list">
