@@ -49,7 +49,7 @@
             color: orange;
         }
         .name-input-container {
-            margin: 20px 0;
+            margin-bottom: 7px;
             margin-top: 10px;
             margin-left: -3px;
             padding: 10px;
@@ -80,11 +80,20 @@
 <body>
 
     <h1>Dataset Review Homepage</h1>
-    Please enter your name below and save before you start!
+
+    <h3>Instructions</h3>
+    <ol>
+        <li>Enter and save your name below.</li>
+        <br>
+        <li>Scroll down to the first video marked as "todo" and start annotating.</li>
+    </ol>
 
     <div class="name-input-container">
         <input type="text" id="reviewerName" class="name-input" placeholder="Enter your name">
         <button onclick="saveReviewerName()" class="save-name-button">Save Name</button>
+    </div>
+        <div id="credit" style="color: gray; font-size: 0.8em; font-style: italic; padding-top: 0px; padding-bottom: 30px;">
+        Original code for this project is based on Johnathan Salfity's <a href="https://github.com/jsalfity/task_decomposition_website">jsalfity/task_decomposition_website</a> project.
     </div>
 
     <div id="video-list"></div>
