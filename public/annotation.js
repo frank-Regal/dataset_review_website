@@ -653,9 +653,9 @@ function toggleFrameRange() {
             // Update the display of recorded ranges
             updateFrameRangesDisplay();
             
-            // Show feedback
-            document.getElementById('feedback').textContent = 
-                `Recorded frame range: ${frameRangeStart} - ${frameRangeEnd}`;
+            // // Show feedback
+            // document.getElementById('feedback').textContent = 
+            //     `Recorded frame range: ${frameRangeStart} - ${frameRangeEnd}`;
         }
         
         button.textContent = 'Mark Frames';
