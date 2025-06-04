@@ -10,16 +10,6 @@ app.use(express.json());
 
 const session = require('express-session');
 
-// app.use(session({
-//     secret: process.env.SESSION_SECRET || 'going-orbital', // Use a strong secret in production
-//     resave: false,
-//     saveUninitialized: false,
-//     cookie: { 
-//         secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-//         maxAge: 24 * 60 * 60 * 1000 // 24 hours
-//     }
-// }));
-
 app.use(session({
     secret: process.env.SESSION_SECRET || 'going-orbital', // Use a strong secret in production
     resave: false,
@@ -29,16 +19,6 @@ app.use(session({
         maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
 }));
-
-// app.use((req, res, next) => {
-//     console.log('Request received:', {
-//         path: req.path,
-//         sessionID: req.sessionID,
-//         session: req.session
-//     });
-//     next();
-// });
-
 
 const dbConfig = {
     connectionString: process.env.DATABASE_URL,

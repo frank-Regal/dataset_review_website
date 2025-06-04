@@ -4,7 +4,7 @@ let annotations = [];
 let startTime = 0; // Track time spent on each video
 let isFastSpeed = true; // Track current speed state
 let isPlaying = true; // Track play/pause state
-let frameRate = 30; // User Specified Frame Rate
+let frameRate = 15; // Load from env var with fallback
 let normalSpeed = 1; // was 2.0 for 10 fps
 let sloMoSpeed = 0.33; // was 0.2 for 10 fps
 let loadDelay = 750; // 250ms delay before proceeding
@@ -246,6 +246,42 @@ async function nextVideo() {
         // Clear feedback message
         document.getElementById('feedback').textContent = '';
     } else {
+        // Get the elapsed time before creating annotation data
+        const time_spent = getElapsedTime();
+        
+        // Save annotation data before redirecting
+        const annotationData = {
+            username: 'anonymous', 
+            video: currentVideo,
+            status: 'verified',
+            time_spent: time_spent
+        };
+
+        try {
+            await fetch('/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(annotationData),
+            });
+
+            // Update status text
+            const statusElement = document.getElementById('video-status');
+            statusElement.textContent = 'VERIFIED';
+            statusElement.className = 'verified-text status-text';
+
+            updateButtonStates();
+
+            // Wait briefly before redirecting
+            await new Promise(resolve => setTimeout(resolve, loadDelay));
+
+            // Redirect to home page
+            window.location.href = '/';
+
+        } catch (error) {
+            console.error('Error saving annotation:', error);
+        }
         document.getElementById('feedback').textContent = 'This is the last video in the sequence.';
     }
 }
@@ -359,7 +395,6 @@ async function markForReview() {
         const nextVideoFilename = videos[currentIndex + 1];
 
         const time_spent = getElapsedTime();
-        console.log('time_spent', time_spent);
 
         // Post entry to database for current video
         const annotationData = {
@@ -388,7 +423,7 @@ async function markForReview() {
 
             // Wait for 2 seconds before proceeding
             await new Promise(resolve => setTimeout(resolve, loadDelay));
-            
+
         } catch (error) {
             console.error('Error saving annotation:', error);
         }
@@ -411,6 +446,43 @@ async function markForReview() {
         // Clear feedback message
         document.getElementById('feedback').textContent = '';
     } else {
+        // Get the elapsed time before creating annotation data
+        const time_spent = getElapsedTime();
+        
+        // Save annotation data before redirecting
+        const annotationData = {
+            username: 'anonymous',
+            video: currentVideo,
+            status: 'revisit',
+            frameRanges: frameRanges,
+            time_spent: time_spent
+        };
+
+        try {
+            await fetch('/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(annotationData),
+            });
+
+            // Update status text
+            const statusElement = document.getElementById('video-status');
+            statusElement.textContent = 'REVISIT';
+            statusElement.className = 'revisit-text status-text';
+
+            updateButtonStates();
+
+            // Wait briefly before redirecting
+            await new Promise(resolve => setTimeout(resolve, loadDelay));
+
+            // Redirect to home page
+            window.location.href = '/';
+
+        } catch (error) {
+            console.error('Error saving annotation:', error);
+        }
         document.getElementById('feedback').textContent = 'This is the last video in the sequence.';
     }
 }

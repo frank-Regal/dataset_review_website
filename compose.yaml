@@ -8,8 +8,8 @@ services:
       - database
     env_file:
       - config.env
-    volumes:
-      - /home/frank_regal/storage/datasets/EgoNRG-Full/data/review/videos:/root/dataset_review_website/public/videos
+    # volumes:
+    #   - /home/frank_regal/storage/datasets/EgoNRG-Full/data/review/videos:/root/dataset_review_website/public/videos
 
   database:
     image: postgres:15
