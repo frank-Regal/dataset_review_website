@@ -69,10 +69,14 @@ async function updateVideoStatus() {
             const videosResponse = await fetch('/videos');
             const videosData = await videosResponse.json();
             
-            // Update the header with title and count
+            // Find the current video's index
+            const currentIndex = videos.findIndex(v => v.video === videoName);
+            const videoNumber = currentIndex + 1;
+            
+            // Update the header with title, count, and video number
             const header = document.querySelector('h1');
             if (header) {
-                header.textContent = `${videosData.title} (${totalVideos - completedVideos}/${totalVideos})`;
+                header.textContent = `Video #${videoNumber} (${totalVideos - completedVideos}/${totalVideos} Complete)`;
             }
             
             const statusElement = document.getElementById('video-status');
