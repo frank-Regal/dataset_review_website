@@ -19,7 +19,7 @@ async function loadVideoProgress() {
         
         // Update the h1 title with the title from _videos.json and the count
         const h1 = document.querySelector('h1');
-        h1.textContent = `${videosData.title} (${totalVideos - completedVideos}/${totalVideos})`;
+        h1.textContent = `${videosData.title} (${totalVideos - completedVideos}/${totalVideos} Complete)`;
 
         // Add numbered entries
         videos.forEach((videoData, index) => {
