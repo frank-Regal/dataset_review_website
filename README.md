@@ -10,6 +10,10 @@ A web interface for multiple users to review and annotate videos from a dataset.
 - **Keyboard shortcuts:** Navigate, play/pause, and mark frames with keyboard shortcuts
 - **Database backed:** All annotations are stored in PostgreSQL
 
+
+https://github.com/user-attachments/assets/5462934d-4f5c-4f94-b2de-8446998972e9
+
+
 ## 1. Install Dependencies
   <details>
   <summary><a href="https://docs.docker.com/engine/install/ubuntu/">Docker</a></summary>
