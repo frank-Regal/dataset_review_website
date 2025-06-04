@@ -8,6 +8,37 @@ const { Client } = require('pg');
 const app = express();
 app.use(express.json());
 
+const session = require('express-session');
+
+// app.use(session({
+//     secret: process.env.SESSION_SECRET || 'going-orbital', // Use a strong secret in production
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: { 
+//         secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+//         maxAge: 24 * 60 * 60 * 1000 // 24 hours
+//     }
+// }));
+
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'going-orbital', // Use a strong secret in production
+    resave: false,
+    saveUninitialized: false,
+    cookie: { 
+        secure: false, // Use secure cookies in production
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
+}));
+
+// app.use((req, res, next) => {
+//     console.log('Request received:', {
+//         path: req.path,
+//         sessionID: req.sessionID,
+//         session: req.session
+//     });
+//     next();
+// });
+
 
 const dbConfig = {
     connectionString: process.env.DATABASE_URL,
@@ -216,7 +247,9 @@ const setupRoutes = (app, client, tableNames) => {
 
             // Store the name in a session or environment variable
             // This will be used when creating new annotations
-            process.env.CURRENT_REVIEWER = name;
+            // process.env.CURRENT_REVIEWER = name;
+
+            req.session.reviewerName = name;
             
             res.json({ name });
         } catch (err) {
@@ -226,9 +259,10 @@ const setupRoutes = (app, client, tableNames) => {
     });
 
     // Get reviewer name
-    app.get('/get-reviewer-name', async (_, res) => {
+    app.get('/get-reviewer-name', async (req, res) => {
         try {
-            res.json({ name: process.env.CURRENT_REVIEWER || '' });
+            // res.json({ name: process.env.CURRENT_REVIEWER || '' });
+            res.json({ name: req.session.reviewerName || '' });
         } catch (err) {
             console.error('Error getting reviewer name:', err);
             res.status(500).json({ error: 'Server error', details: err.message });
@@ -238,8 +272,9 @@ const setupRoutes = (app, client, tableNames) => {
     // Modify the existing /save endpoint to use the stored name
     app.post('/save', async (req, res) => {
         const { video, status, frameRanges, time_spent } = req.body;
-        const username = process.env.CURRENT_REVIEWER || 'anonymous';
-        
+        // const username = process.env.CURRENT_REVIEWER || 'anonymous';
+        const username = req.session.reviewerName || 'anonymous';
+
         // Add validation
         if (!status) {
             console.error('Status is missing or null');
