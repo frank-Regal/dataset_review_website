@@ -725,19 +725,19 @@ function toggleFrameRange() {
             button.updateFrameDisplay = null;
         }
         
-        // Only save if end frame is after start frame
-        if (frameRangeEnd > frameRangeStart) {
+        // Handle both single frame and range cases
+        if (frameRangeEnd >= frameRangeStart) {
+            // If it's a single frame, use the same frame for start and end
+            const start = frameRangeStart;
+            const end = frameRangeEnd === frameRangeStart ? frameRangeStart : frameRangeEnd;
+            
             frameRanges.push({
-                start: frameRangeStart,
-                end: frameRangeEnd
+                start: start,
+                end: end
             });
             
             // Update the display of recorded ranges
             updateFrameRangesDisplay();
-            
-            // // Show feedback
-            // document.getElementById('feedback').textContent = 
-            //     `Recorded frame range: ${frameRangeStart} - ${frameRangeEnd}`;
         }
         
         button.textContent = 'Mark Frames (s)';
