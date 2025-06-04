@@ -1,10 +1,33 @@
 # Dataset Review Website
 
-This repo creates a basic web interface for multiple users to review multiple videos from a dataset.
+A web interface for multiple users to review and annotate videos from a dataset.
 
+**Features**
 
-> This repo is based on [jsalfity/task_decomposition_website](https://github.com/jsalfity/task_decomposition_website) and heavily modified for the specific use cases here
+- **Multi-user annotation:** Each reviewer's progress is tracked individually
+- **Video status tracking:** Videos can be marked as "todo", "verified", or "revisit"
+- **Frame range marking:** Users can mark specific frame ranges for review
+- **Keyboard shortcuts:** Navigate, play/pause, and mark frames with keyboard shortcuts
+- **Database backed:** All annotations are stored in PostgreSQL
 
+## 1. Install Dependencies
+  <details>
+  <summary><a href="https://docs.docker.com/engine/install/ubuntu/">Docker</a></summary>
+  <br>
+
+  Installation Guide: 🔗 https://docs.docker.com/engine/install/ubuntu/
+
+  </details>
+  <details>
+  <summary><a href="">Node.js</a> (Optional: Only for non-docker development) </summary>
+  <br>
+
+  </details>  
+  <details>
+  <summary><a href="">PostgreSQL</a> (Optional: Only for non-docker development) </summary>
+  <br>
+
+  </details>  
 
 ## Setup
 ### Build Docker Image
@@ -18,11 +41,25 @@ make build
    cp config.env.example config.env
    ```
    
-3. Configure the following with your specific parameters
-   - `NODE_ENV` - "development" or "production"
-   - `DATABASE_URL` - `postgresql://<username>:<password>@<host_url>:<database_port>/<database_name>`
-   - `PORT` - port to run the web interface on
-   - `MAX_ANNOTATIONS_PER_VIDEO` - how many annotations you require per video
+2. Edit `config.env`
+   - Set `NODE_ENV` to `development` or `production`
+   - Set `DATABASE_URL` to your PostgreSQL connection string (e.g., `postgresql://user:password@host:port/dbname`)
+   - Set `PORT` for the web interface (default: `3000`)
+
+### Prepare Your Videos
+
+- Place your video files in the directory mapped in `compose.yaml`
+   - Change the default directory (`/home/frank_regal/storage/datasets/EgoNRG-Full/data/review/videos`) in `compose.yaml` to your local directory.
+- Ensure there is a `_videos.json` file in the directory with your videos that has the following format
+  
+  ```bash
+  {
+    "title": "Website Title",
+    "videos": [
+        "video1.mp4",
+        ...
+  }
+  ```
 
 ## Run
 > Note this starts everything (website server, database, and restful api)
@@ -45,9 +82,41 @@ make build
    npm start
    ```
 
-## Inferface
-1. Open the following link in your browser
+## Using the Website
 
-   ```shell
-   http://localhost:3000
-   ```
+- **Access the interface:**  
+  Open your browser to `http://localhost:3000`
+- **Enter your name:**  
+  On the homepage, enter your name and click "Save Name"
+- **Review videos:**  
+  Click on a video marked as "todo" to start annotating
+- **Annotate:**  
+  Use the interface to mark video segments for review, verify videos, or skip to the next one
+
+## Scripts
+
+- **Connect to database:**  
+- **Delete data:**  
+  - All entries: `scripts/delete-all.sh <table>`
+  - Single entry: `scripts/delete.sh <table> <id>`
+- **Retrieve data:**  
+  - All entries: `scripts/get-all.sh <table>`
+  - Single entry: `scripts/get-entry.sh <table> <video>`
+  - Frame ranges: `scripts/get-entry_frame-range.sh <table> <id>`
+
+## License
+
+This project is licensed under the **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)** license. See [LICENSE](LICENSE) for details.
+
+## Troubleshooting
+
+- **Web interface error:**  
+  If the web interface fails to start in Docker, run `npm install` inside the container and then `npm start`.
+- **Database connection:**  
+  Ensure `DATABASE_URL` in `config.env` is correct and the database container is running.
+- **Video files:**  
+  Ensure videos are placed in the correct directory and listed in `_videos.json`.
+
+## Acknowledgements
+
+Original code is based on [jsalfity/task_decomposition_website](https://github.com/jsalfity/task_decomposition_website).
