@@ -29,7 +29,7 @@ A web interface for multiple users to review and annotate videos from a dataset.
 
   </details>  
 
-## Setup
+## 2. Setup
 ### Build Docker Image
 ```shell
 make build
@@ -61,7 +61,7 @@ make build
   }
   ```
 
-## Run
+## 3. Run
 > Note this starts everything (website server, database, and restful api)
 
 1. Start the containers
@@ -82,7 +82,7 @@ make build
    npm start
    ```
 
-## Using the Website
+## 4. Using the Website
 
 - **Access the interface:**  
   Open your browser to `http://localhost:3000`
@@ -93,7 +93,7 @@ make build
 - **Annotate:**  
   Use the interface to mark video segments for review, verify videos, or skip to the next one
 
-## Scripts
+## 5. Scripts
 
 - **Connect to database:**  
 - **Delete data:**  
@@ -104,11 +104,7 @@ make build
   - Single entry: `scripts/get-entry.sh <table> <video>`
   - Frame ranges: `scripts/get-entry_frame-range.sh <table> <id>`
 
-## License
-
-This project is licensed under the **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)** license. See [LICENSE](LICENSE) for details.
-
-## Troubleshooting
+## 6. Troubleshooting
 
 - **Web interface error:**  
   If the web interface fails to start in Docker, run `npm install` inside the container and then `npm start`.
@@ -116,6 +112,11 @@ This project is licensed under the **Creative Commons Attribution-NonCommercial 
   Ensure `DATABASE_URL` in `config.env` is correct and the database container is running.
 - **Video files:**  
   Ensure videos are placed in the correct directory and listed in `_videos.json`.
+
+
+## License
+
+This project is licensed under the **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)** license. See [LICENSE](LICENSE) for details.
 
 ## Acknowledgements
 
