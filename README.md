@@ -97,9 +97,18 @@ make build
 - **Annotate:**  
   Use the interface to mark video segments for review, verify videos, or skip to the next one
 
-## 5. Scripts
+## 5. Inferfacing
 
-- **Connect to database:**  
+- **Delete Tables:**
+  1. Open Docker container shell
+     ```bash
+     make shell
+     ```
+  2. Run the following
+     ```bash
+     node server.js --drop-tables
+     ```
+
 - **Delete data:**  
   - All entries: `scripts/delete-all.sh <table>`
   - Single entry: `scripts/delete.sh <table> <id>`
